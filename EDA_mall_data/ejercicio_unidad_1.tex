@@ -1,0 +1,251 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={ejercicio\_unidad\_1},
+  pdfauthor={Samuel Melo Balcázar},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{ejercicio\_unidad\_1}
+\author{Samuel Melo Balcázar}
+\date{2025-01-24}
+
+\begin{document}
+\maketitle
+
+\paragraph{Paso 1: Construcción de una tabla
+descriptiva}\label{paso-1-construcciuxf3n-de-una-tabla-descriptiva}
+
+Crear una tabla que contenga las siguientes columnas: Nombre de la
+variable. Breve descripción de la variable. Clasificación según su
+naturaleza. Clasificación según su origen.
+
+\begin{table}
+\centering
+\begin{tabular}[t]{l|l|l|l}
+\hline
+nombres\_variables & Descripcion\_variables & clasificacion\_naturaleza & clasificacion\_origen\\
+\hline
+invoice\_no & Número de factura & Numérica & Transacción\\
+\hline
+customer\_id & id de cliente & Numérica & Cliente\\
+\hline
+gender & Sexo de los clientes & Categórica & Cliente\\
+\hline
+age & Edad & Numérica & Cliente\\
+\hline
+category & Artículo comprado & Categórica & Producto\\
+\hline
+quantity & Cantidad & Numérica & Transacción\\
+\hline
+price & Precio & Numérica & Transacción\\
+\hline
+payment\_method & Método de pago & Categórica & Transacción\\
+\hline
+\end{tabular}
+\end{table}
+
+\paragraph{Paso 2: Identificación y eliminación de
+duplicados}\label{paso-2-identificaciuxf3n-y-eliminaciuxf3n-de-duplicados}
+
+Identificar registros duplicados en la base de datos y eliminarlos.
+Posteriormente, presentar un resumen con los resultados obtenidos por
+variable.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 18\tabcolsep) * \real{0.1038}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 18\tabcolsep) * \real{0.1132}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 18\tabcolsep) * \real{0.0660}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 18\tabcolsep) * \real{0.0377}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 18\tabcolsep) * \real{0.0943}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 18\tabcolsep) * \real{0.0849}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 18\tabcolsep) * \real{0.0660}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 18\tabcolsep) * \real{0.1415}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 18\tabcolsep) * \real{0.1226}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 18\tabcolsep) * \real{0.1698}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+invoice\_no
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+customer\_id
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+gender
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+age
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+category
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+quantity
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+price
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+payment\_method
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+invoice\_date
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+shopping\_mall
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+I317333 & C111565 & Male & 21 & Shoes & 3 & 180051 & Debit Card &
+2021-12-12 & Forum Istanbul \\
+I294687 & C300786 & Male & 65 & Books & 2 & NA & Debit Card & 2021-01-16
+& Metrocity \\
+I337719 & C320928 & Male & 40 & Cosmetics & 5 & 2033 & Cash & 2021-01-18
+& Istinye Park \\
+I258204 & C167183 & Female & 54 & Clothing & 1 & 30008 & Credit Card &
+2023-02-03 & Emaar Square Mall \\
+I184085 & C175610 & Female & 33 & Cosmetics & 3 & 12198 & Credit Card &
+2021-12-11 & Mall of Istanbul \\
+\end{longtable}
+
+\paragraph{Paso 3: Detección de valores atípicos o
+inconsistencias}\label{paso-3-detecciuxf3n-de-valores-atuxedpicos-o-inconsistencias}
+
+Identificar valores atípicos e inconsistencias para cada variable.
+Generar una tabla con: El número de valores atípicos o inconsistentes
+por variable. Los valores detectados como atípicos o inconsistentes.
+Complementar esta información con gráficos adecuados y una tabla con
+indicadores de tendencia central, posición y variabilidad.
+
+\paragraph{Paso 4: Manejo de valores
+atípicos}\label{paso-4-manejo-de-valores-atuxedpicos}
+
+Tomar decisiones sobre cómo tratar los valores atípicos o
+inconsistentes. Documentar las razones de las decisiones adoptadas y
+presentar una tabla comparativa con los datos antes y después del
+tratamiento. Incluir gráficos que ilustren el impacto de las decisiones
+tomadas, junto con indicadores descriptivos actualizados.
+
+\paragraph{Paso 5: Análisis de datos
+faltantes}\label{paso-5-anuxe1lisis-de-datos-faltantes}
+
+Calcular el porcentaje de datos faltantes por variable. Presentar los
+resultados mediante al menos dos gráficos que destaquen las variables
+afectadas y el porcentaje de datos faltantes correspondiente.
+
+\paragraph{Paso 6: Test de hipótesis para datos
+faltantes}\label{paso-6-test-de-hipuxf3tesis-para-datos-faltantes}
+
+Implementar un test de hipótesis para determinar si el mecanismo de
+generación de datos faltantes es MCAR (Missing Completely at Random).
+Explicar los resultados obtenidos.
+
+\paragraph{Paso 7: Imputación de datos
+faltantes}\label{paso-7-imputaciuxf3n-de-datos-faltantes}
+
+Aplicar técnicas de imputación para los datos faltantes, justificando
+las decisiones adoptadas en cada caso. Complementar con gráficos que
+ilustren el resultado de las imputaciones realizadas.
+
+\paragraph{Paso 8: Análisis descriptivo
+post-procesamiento}\label{paso-8-anuxe1lisis-descriptivo-post-procesamiento}
+
+Realizar un análisis descriptivo de las variables después de la
+limpieza, tratamiento de valores atípicos e imputación de datos
+faltantes. Incluir:
+
+Gráficos adecuados para cada variable. Indicadores estadísticos
+relevantes. Evaluar posibles análisis bivariados que sean pertinentes en
+el contexto del conjunto de datos.
+
+\paragraph{Paso 9: Selección de resultados para el
+informe}\label{paso-9-selecciuxf3n-de-resultados-para-el-informe}
+
+Seleccionar gráficos e indicadores clave que resuman los hallazgos
+obtenidos durante el análisis. Estos resultados serán utilizados en el
+informe final.
+
+\paragraph{Paso 10: Explicación de patrones y
+tendencias}\label{paso-10-explicaciuxf3n-de-patrones-y-tendencias}
+
+Elaborar un análisis final que explique los patrones y tendencias de
+consumo en Estambul con base en los datos procesados.
+
+\end{document}

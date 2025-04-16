@@ -1,0 +1,731 @@
+---
+title: "ejercicio_unidad_1"
+author: "Samuel Melo Balcázar"
+date: "2025-02-17"
+output:
+  html_document: default
+  pdf_document: default
+Subject: Métodos estadísticos
+---
+
+<br/><br/>
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+#Librerías usadas
+library(kableExtra)
+library(ggplot2)
+library(dplyr)
+library(readxl)
+library(knitr)
+library(naniar)
+library(Hmisc)
+library(tidyr)
+library(tidyverse)
+library(VIM)
+library(waffle)
+
+knitr::opts_chunk$set(echo = TRUE, comment = NA)
+
+source("01. cargar_bd.R")
+source("02. duplicados.R")
+```
+
+
+# *Introducción*
+
+En el presente análisis se analizan los datos obtenidos de un dataset que corresponde a las ventas realizadas en algunos centros comerciales en Estambul. En este se puede encontrar, como se ve más adelante, datos correspondientes a los clientes, productos, factuas, centros comerciales, entre otros.
+
+En este ejercicio se han puesto en práctica los conceptos y técnicas aprendidos a lo largo de la unidad, con los cuales se pudo realizar un EDA en R y se ha podido analizar el conjunto de datos proporcionado.
+
+<br/><br/>
+
+# *Paso 1:* Creación de tabla descriptiva
+
+A continuación, se crea una tabla descriptiva que contiene las variables: nombre de las variables, la descripción de la misma, su clafisicación según la naturaleza y el origen de cada una. Esta tabla contiene las variables del set de datos seleccionados para el presente ejercicio.
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+df_variables = data.frame(
+  variables = names(df),
+  variable_descriptions = c("Numero de factura",
+                            "id de cliente",
+                            "Sexo de clientes",
+                            "Edad",
+                            "Articulo comprado",
+                            "Cantidad",
+                            "Precio",
+                            "Metodo de pago",
+                            "Fecha de factura",
+                            "nombre del mall"),
+  nature = c("NA",
+              "NA",
+              "cualitativa | escala nominal",
+              "cuantitativa | escala de razón",
+              "cualitativa | escala nominal",
+              "cuantitativa | escala de razón",
+              "cuantitativa | escala de razón",
+              "cualirariva | escala nominal",
+              "NA",
+              "cualitativa | escala nominal"),
+  origin = c("variable determinística",
+              "variable determinística",
+              "variable aleatoria",
+              "variable aleatoria",
+              "variable aleatoria",
+              "variable aleatoria",
+              "variable aleatoria",
+              "variable aleatoria",
+              "variable aleatoria",
+              "variable aleatoria")
+              )
+
+kable(df_variables)
+```
+
+<br/><br/>
+
+# *Paso 2*: Identificación y eliminación de duplicados
+
+En este paso se identifican los datos duplicados en el dataset y se elimanan.
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+dim_df_original <- dim(df)
+dim_df_nd <- dim(df_no_duplicated)
+
+cat("La dimensión de la data original es de:", dim_df_original[1], "registros")
+cat("La dimensión de la data sin duplicados es de:", dim_df_nd[1], "registros")
+
+kable(df_duplicated)
+```
+
+En la tabla anterior se evidencian los registros que están duplicados.
+
+<br/><br/>
+
+# *Paso 3*: Detección de valores atípicos o inconsistencias
+
+Para conocer los valores atípicos en el dataset usado en el presente informe se realiza el siguiente proceso: primero, se escogen las variable cuantitativas; segundo se generan gráficos de caja individiuales para determinar cuáles de estas tienen valores atípicos.
+
+Los resultados de esto se muestran a continuación.
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+df_num <- df_no_duplicated[, c(4, 6, 7)]
+summary(df_num)
+
+"Bloxplot de edad, cantidad y precio"
+par(mfrow = c(1, 3))
+boxplot(df_no_duplicated$age)
+boxplot(df_no_duplicated$quantity)
+boxplot(df_no_duplicated$price)
+```
+
+Se puede evidencia del anterior ejercicio que la variable price es aquella que tiene valores atípiocs, demasiado altos y bajos. Esta variable corresponde al valor monetario que cuesta los productos que ofrece la tienda y la moneda son liras turcas. Por consiguiente, hay productos que son muy económicos y muy costosos -llegando a los siete millones-. Esta es la razón de los datos atípicos.
+
+A continuación, se explica el manejo de los datos atípicos.
+
+<br/><br/>
+
+# *Paso 4*: Manejo de valores atípicos
+
+Tomar decisiones sobre cómo tratar los valores atípicos o inconsistentes. Documentar las razones de las decisiones adoptadas y presentar una tabla comparativa con los datos antes y después del tratamiento. Incluir gráficos que ilustren el impacto de las decisiones tomadas, junto con indicadores descriptivos actualizados.
+
+Ya que el dataset presenta datos atípicos, el paso que se decide tomar es eliminarlos, dado que generan distorsión y dificultan el análisis de los datos presentados.
+
+Una inquietud que surge en este proceso es la del peso porcentual de los datos atípicos. Para ello, se realizó la siguiente la variable "atipico", en la que 1 significa atípico -que está por encima del límite superior-, y 0, que no. Con esta información, se puede determinar que los datos que están por fuera del ls son cerca del 6 % del dataset.
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+#tabla con datos atípicos
+desc_precio = summary(df_no_duplicated$price)
+Q3 = desc_precio[5]
+Q1 = desc_precio[2]
+IQR = Q3 - Q1
+LS = Q3 + 1.5 * IQR
+LI = Q1 - 1.5 * IQR
+
+df_no_duplicated$atipico <- as.numeric(df_no_duplicated$price > LS | df_no_duplicated$price < LI)
+
+df_no_da <- subset(df_no_duplicated, atipico == 0)
+
+df_a <- subset(df_no_duplicated, atipico == 1)
+
+table((df_no_duplicated$atipico)/99457*100)
+
+LS
+LI
+Q3
+```
+
+Los datos se eliminan por protocolo, dadas las razones ya expuestas.
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+
+"Tabla de resumen de edad, precio y cantidad"
+summarytools::descr(df_a)
+```
+
+Ahora bien, dentro de las variables cuantitativas se puede observar que, al igual que ilustra el boxplot, no hay presencia de datos muy grandes en age ni quantity. Lo anterior demuestra que se deben centrar las acciones en la variable price.
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+"Resumen de atípicos de precio"
+summary(df_a$price)
+```
+
+En la tabla anterior se pueden notar los valores máximos y mínimos de la variable "price", que es la de interés en este momento. Así, se puede observar el valor más alto, que es de más de siete millones. Con esta información se puede puede realizar el boxplot con los datos atípicos.
+
+En este sentido, se pueden observar los datos atípicos el el siguiente gráfico.
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+"Boxplot de datos atípicos de precios"
+boxplot(df_a[, 7], ylim = c(180000, 8000000 ))
+```
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+"Gráfico de precios sin atípicos"
+
+ggplot(df_no_da, aes(x = "Precio de artículos", y = price)) +
+  geom_boxplot(fill = "skyblue", alpha = 0.7) +
+  scale_y_continuous(limits = c(0, quantile(df_no_da$price, 0.99))) +
+  labs(title = "box Plot de Price", y = "Price") +
+  theme_minimal()
+```
+
+
+
+Una vez excluídos los datos atípicos, se puede observar en este boxplot datros entre 2000 y 60 000 liras. Estos valores son los cuartiles, inferior y superior, respectivamente. Este gráfico muestra la concentración de los valores alrededor de la mediana.
+
+Como se ha excluído los valores atípicos, se facilita exhibir y analizar los datos, como estos mínimos y máximos, como tendencias y patrones representativos.
+
+<br/><br/>
+
+# *Paso 5*: Análisis de datos faltantes
+
+El análisis de los datos faltantes se realiza con el set de datos sin los datos duplicados. Para realizarlo, se seleccionan las variables, sin tener en cuenta las de identificación de clientes ni facturas, puesto que estas no son interesantes para el presente trabajo. Por ende, las variables seleccionadas son: género, edad, categoría, cantidad, precio y método de pago.
+
+Calcular el porcentaje de datos faltantes por variable. Presentar los resultados mediante al menos dos gráficos que destaquen las variables afectadas y el porcentaje de datos faltantes correspondiente.
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+"Resumen de categorías sin datos duplicados"
+kable(summary(df_no_duplicated[, 3:8, 10]))
+```
+
+El listado anterior muestra que el total de registros en las variables es el número de la dimensión del data set, es decir, corresponde a todos los registros. Sin embargo, hay algunas variables que poseen datos faltantes, y que son del interés del presente análisis.
+
+Tal como se muestra a continuación, esta nueva tabla expone de mejor manera el total de datos faltantes en cada variable. Ahora bien, las variables que se escogerán, según sea mejor en el siguiente paso, son las cuantitativas, concretamente edad.
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+"Tabla de datos faltantes por variable"
+
+faltantes <- colSums(is.na(df_no_da)) %>%
+  as.data.frame()
+  colnames(faltantes) <- c("faltantes")
+  faltantes <- faltantes %>% arrange(desc(faltantes))
+
+kable(faltantes)
+```
+
+<br/><br/>
+
+# *Paso 6*: Test de hipótesis para datos faltantes
+
+Se plantea una hipótesis nula (Ho) y una alternativa (Ha). La primera, hace referencia a que los datos faltantes son MCAR, es decir, randoms, ocurren por completo al azar; la segunda, quiere decir que no son randoms, que hay un patrón entre estos y que puede depender de otras variables.
+
+Se realiza el test de hipótesis, el cual tiene el siguiente resultado.
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+"Test de hipótesis"
+mcar_test <- naniar::mcar_test(df)
+mcar_test
+```
+El resultado del test de hipótesis fue 0.822762, lo que significa que no hay evidencia suficiente para negar la Ho, por lo que los datos faltantes carecen de una relación o patrón. Esto quiere decir que se pueden omitir o imputar sin temor a que se modifique significativamente el conjunto de datos. En conclusión, se pueden tomar las decisiones previamente mencionadas sin temor a sesgar el ejercicio.
+
+<br/><br/>
+
+# *Paso 7*: Imputación de datos faltantes
+
+Según lo anterior, se toma la decición de imputar por la media de la variable. Esta decisión se toma por dos motivos. El primero, el resultado anterior evidencia la carencia de patrón y demuestra la aleatoriedad en los datos faltantes, por lo que la acción aquí tomada no tiene efecto significativo en el conjunto de datos; la segunda, se puede considerar como lo más correcto metodológicamente hablando (Muñoz y Álvarez, 2009), ya que es más eficaz para este tipo de casos y se cuenta con usa más información disponible.
+
+Esta decisión se toma a pesar de que estos datos no poseen mayor peso porcentual e impacto en el dataset. Sin embargo, dado el test de hipótesis se quiere contar con la mayor cantidad de datos, teniendo en cuenta que no altera significativamente los resultados del ejercicio.
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+media_Edad <- round(mean(df_no_da$age, na.rm = TRUE), 0)
+
+"Datos perdidos por variables"
+
+df_no_da$age[is.na(df_no_da$age)] <- media_Edad
+cat("La media de la edad es:", media_Edad)
+naniar::gg_miss_var(df_no_da) 
+```
+
+En esta imputación se reemplazaron los datos faltantes de la variable edad, que es la que interesa para el presente análisis, con la media de la misma. Como resultado de esto, se puede evidenciar en el gráfico anterior que esta característica en el _dataset_ no presenta datos faltantes.
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+"Tabla de resumen de variables sin atípicos ni duplicados"
+kable(summary(df_no_da[, 3:8,10]))
+```
+
+Como se puede evidenciar, el dataset no cuenta con datos faltantes y tampoco se alteraron los estadísticos de mediad central. Tal como lo mostró el test de hipótesis, en este análisis no se afectaron los datos con la imputación, por lo que se puede considerar que el ejercicio es correcto y bien realizado. Por consiguiente, se puede proceder a graficar y analizar los datos.
+<br/><br/>
+
+# *Paso 8*: Análisis descriptivo post-procesamiento
+
+Una vez efectuado el posprocesado de los datos, se visualizan las siguientes variables.
+
+En primer lugar, se puede observar la distribución por género de las y los clientes. Esta clasificación es binaria, puesto que abarca hombres y mujeres.
+
+En este orden de ideas, se puede observar que las compras fueron, en el total, hechas por mujeres, puesto que seis de cada diez compras fueron hechas por mujeres. Con esta información se pueden elaborar distintas estrategias para atraer a este segmento poblacional.
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+#pie
+library(stringr)
+
+df_no_da <- df_no_da %>%
+  mutate(gender = str_to_title(gender))
+
+df_gender <- df_no_da %>%
+  filter(!is.na(gender)) %>%
+  count(gender) %>%
+  mutate(percentage = round(n / sum(n) * 100, 1))
+
+"Gráfico de clientes por sexo"
+ggplot(df_gender, aes(x = "", y = n, fill = gender)) +
+  geom_bar(stat = "identity", width = 1) +  
+  coord_polar(theta = "y") +  
+  labs(title = "Distribución por sexo") +
+  theme_void() +
+  geom_text(aes(label = paste0(percentage, "%")), 
+            position = position_stack(vjust = 0.5), 
+            color = "white", size = 5)
+```
+
+En este otro gráfico, se puede observar que la distribución de las edad, agrupadas en secciones de 10 anños entre sí, demuestra casi una forma de campana en las frecuencias, teniendo menor cantidad de personas más jóvenes y de mayor edad y teniendo una mayor cantidad en los grupos del centro, entre 38 y 48 años de edad.
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+"Gráfico de edades de los clientes"
+
+ggplot(df_no_da, aes(x = age)) +
+  geom_histogram(binwidth = 10, fill = "gray", color = "black") +
+  labs(title = "Distribución de la edad", x = "Edad", y = "Frecuencia") +
+  scale_x_continuous(breaks = seq(18, 70, by = 10))
+  theme_minimal()
+```
+
+
+En cuanto a las cantidades de compras, según el segmento de datos, la mayoría de objetos comprados  fueron entre 1 y 2, aunque no presentan mucha diferencia con las demás opciones. Ahora bien, la distribución es relativamente homogénea, no está demasiado sesgada hacia la izquieda, aunque estos datos sí ostentaron mayor cantidad de datos.
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+"Gráfico de cantidades compradas"
+
+ggplot(df_no_da, aes(x = quantity)) +
+  geom_bar(binwidth = 5, fill = "skyblue", color = "black") +
+  labs(title = "Cantidades compradas", x = "Cantidades", y = "Frecuencia")
+```
+
+En el siguiente gráfico se puede observar la distribución de los precios de los productos del dataset, el cual se estableció desde 2300 hasta 121 000, pues son los valores mínimos y máximos después de eliminar los outliers.
+
+Es notable que la distribución de la gráfica no es normal, pues está inclinada hacia la izquierda, lo que demuestra que, como se podría pensar naturalmente, los productos de menor costo son los que más ventas registraron en los datos capturados. en este orden de ideas, el grupo de entre 2300 y 18 000 tienen frecuencaias de 40 000, y los de 18 000 a 33 000, 20 000 registros. Lo anterior expone que en los tres primeros grupos se concentra cerca de la mitad de las ventas registradas. Por otro lado, hay grupos que no registran suficientes datos como para ser evidenciados en el gráfico.
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+"Gráfico de la distribución de precios"
+
+ggplot(df_no_da, aes(x = price)) +
+  geom_histogram(binwidth = 15000, fill = "darkgreen", color = "black") +
+  labs(title = "Distribución de Precios", x = "Precio", y = "Frecuencia") +
+  scale_x_continuous(breaks = seq(2300, 121000, by = 15000))
+  theme_minimal()
+```
+
+
+Se puede observar que el método de pago preferido por los clientes es efectivo, cuatro de cada diez personas prefirieron usar este medio de pago. Las tarjetas débido son las que menos forma de pago tienen, con solo dos de cada diez casos. Seguramente, por las ventajas que dan las entidades bancarias, las tarjetas crédito se ha popularizado como forma de pago.
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+df_no_da <- df_no_da %>%
+  mutate(payment_method = str_to_title(payment_method))
+
+df_method <- df_no_da %>%
+  count(payment_method) %>%
+  mutate(percentage = round(n / sum(n) * 100, 1))
+
+"Gráfico de método de pago"
+
+ggplot(df_method %>% filter(!is.na(payment_method)), aes(x = "", y = n, fill = payment_method)) +
+  geom_bar(stat = "identity", width = 1) +  
+  coord_polar(theta = "y") +  
+  labs(title = "Distribución por método de pago") +
+  theme_void() +
+  geom_text(aes(label = paste0(percentage, "%")), 
+            position = position_stack(vjust = 0.5), 
+            color = "white", size = 5)
+```
+
+
+Durante el periodo estudiado, se puede observar que el volumen de ventas es estable y numeroso, lo que indica, salvo en contados casos, una estabilidad prolongada. No se evidencian meses en los que se presente ventas altas por ocasiones o temporadas específicas. Lo anterior sugiere que el nivel de ventas presentado es normal.
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+df_no_da <- df_no_da %>%
+  mutate(invoice_date = as.Date(invoice_date))
+
+ventas_por_mes <- df_no_da %>%
+  mutate(mes = floor_date(invoice_date, "month")) %>%
+  group_by(mes) %>% 
+  summarise(ventas = sum(quantity), .groups = 'drop')
+
+"Gráfico de histórico de ventas"
+ggplot(ventas_por_mes, aes(x = mes, y = ventas)) +
+  geom_line(color = "steelblue", size = 1) + 
+  geom_point(color = "red", size = 3) + 
+  labs(title = "Histórico ventas",
+       x = "Mes",
+       y = "Total de ventas (cantidad de productos)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+
+Se puede ver que por año las mujeres son quienes más compran, con una notoria diferencia con los hombres. La salvedad del último periodo es por la fecha de recolección de datos.
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+
+ventas_por_año_genero <- df_no_da %>%
+  mutate(año = year(invoice_date)) %>% 
+  group_by(año, gender) %>%
+  summarise(ventas = sum(quantity), .groups = 'drop')
+
+"Gráfico de ventas de cada año por sexo"
+ggplot(ventas_por_año_genero %>% filter(!is.na(gender)), aes(x = factor(año), y = ventas, fill = gender)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_text(aes(label = ventas), position = position_dodge(width = 0.9), vjust = -0.5, size = 4) +
+  labs(title = "Ventas por año y género",
+       x = "Año",
+       y = "Total de ventas (cantidad de productos)",
+       fill = "Género") +
+  theme_minimal()
+```
+
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+"Tabla de resumen de las variables"
+kable(summary(df_no_da))
+```
+Como se puede observar, las variables del dataset no presentan datos faltantes, puesto que, como se ha mostrado en el documento, se hizo un tratamiento de los datos. Estos indicadores demuestran que los datos de edades no cambiaron significativamente, como lo indicó el test de hipótesis, ya que siguen con la misma media, lo que sugiere que el ejercicio fue realizado de manera correcta. Además, en cuanto a precio no hay datos atípitos, superiores al tercer cuartil, lo que indica que el análisis se puede realizar de manera más fácil.
+
+De igual manera, se puede ver que en la variable atipico no hay datos, puesto que previamente se apartaron en los pasos previos en el presente análisis
+
+## Cruce de variables
+
+A continuación se dejan las gráficas con las cuale se puede realizar un análisis bivariado. Se destaca, además, que la variable que más se ha prestado para esto ha sido la de género, la cual ayuda a observar los datos desde otra perspectiva. Igualmente destabale es el hecho de que el uso de diagramas de barras facilita la lectura de los datos.
+
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+#análisis bivariado
+
+df_no_da <- df_no_da %>%
+  mutate_at(vars(category, payment_method, shopping_mall), str_to_title)
+
+
+compras_por_genero_categoria <- df_no_da %>%
+  filter(!is.na(gender)) %>%
+  group_by(gender, category) %>%
+  summarise(transacciones = n(), .groups = 'drop')
+
+"Gráfico de clientes por sexo"
+
+ggplot(compras_por_genero_categoria %>% filter(!is.na(gender) & !is.na(category)), aes(x = category, y = transacciones, fill = gender)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Compras por género y categoría de producto",
+       x = "Categoría",
+       y = "Número de transacciones",
+       fill = "Género") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+"Gráfico de ventas por centro comercial"
+ventas_por_mall <- df_no_da %>%
+  filter(!is.na(shopping_mall) & !is.na(quantity)) %>%
+  group_by(shopping_mall) %>%
+  summarise(total_quantity = sum(quantity), .groups = 'drop') 
+
+ggplot(ventas_por_mall, aes(x = shopping_mall, y = total_quantity, fill = shopping_mall)) +
+  geom_bar(stat = "identity") + 
+  geom_text(aes(label = total_quantity), vjusto = -0.5, color = "black", size = 4) +
+  labs(title = "Total de artículos vendidos por centro comercial",
+       x = "Centro comercial",
+       y = "Total de artículos vendidos",
+       fill = "Centro comercial") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+prod_mall <- df_no_da %>%
+  filter (!is.na(category))%>%
+  group_by(category, shopping_mall) %>%
+  summarise(transacciones = n(), .groups = 'drop')
+
+"Gráfico de categorías por centro comercial"
+ggplot(prod_mall %>% filter(!is.na(shopping_mall) & !is.na(category)), aes(x = shopping_mall, y = transacciones, fill = category)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Cantidad de productos en centros comerciales",
+       x = "Centro comercial",
+       y = "Cantidades",
+       fill = "Cantidad") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+"Gráfico de dispersión con regresión lineal"
+ggplot(df_no_da, aes(x = age, y = price)) +
+  geom_point(alpha = 0.5, color = "blue") +  # Puntos del gráfico
+  geom_smooth(method = "lm", color = "red", se = TRUE) +  # Línea de regresión
+  labs(title = "Relación entre precio y cantidad de productos comprados",
+       x = "Precio (TRY)",
+       y = "Cantidad") +
+  theme_minimal()
+
+"Gráfico de centro categorías vendidas por centro comercial"
+library(treemap)
+treemap(df_no_da,
+        index = c("shopping_mall", "category"),
+        vSize = "quantity",
+        title = "Distribución de compras por centro comercial y categoría")
+
+"Gráfico de ventas por mes"
+ggplot(ventas_por_mes, aes(x = mes, y = ventas)) +
+  geom_line(color = "steelblue", size = 1) + 
+  geom_point(color = "red", size = 3) + 
+  labs(title = "Histórico ventas",
+       x = "Mes",
+       y = "Total de ventas (cantidad de productos)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+"Gráfico de ventas anuales por género"
+ggplot(ventas_por_año_genero %>% filter(!is.na(gender)), aes(x = factor(año), y = ventas, fill = gender)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_text(aes(label = ventas), position = position_dodge(width = 0.9), vjust = -0.5, size = 4) +
+  labs(title = "Ventas por año y género",
+       x = "Año",
+       y = "Total de ventas (cantidad de productos)",
+       fill = "Género") +
+  theme_minimal()
+```
+ 
+
+<br/><br/>
+
+# *Paso 9*: Selección de resultados para el informe
+
+Los gráficos escogidos en el presente análisis, que resumen los hallazgos del mismo y sirven para el informe que se debe presentar son los siguientes:
+
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+# Crear una lista para almacenar gráficos seleccionados
+"Gráfico por género"
+ggplot(df_gender, aes(x = "", y = n, fill = gender)) +
+  geom_bar(stat = "identity", width = 1) +  
+  coord_polar(theta = "y") +  
+  labs(title = "Distribución por sexo") +
+  theme_void() +
+  geom_text(aes(label = paste0(percentage, "%")), 
+            position = position_stack(vjust = 0.5), 
+            color = "white", size = 5)
+"Gráfico por edad"
+ggplot(df_no_da, aes(x = age)) +
+  geom_histogram(binwidth = 10, fill = "gray", color = "black") +
+  labs(title = "Distribución de la edad", x = "Edad", y = "Frecuencia") +
+  scale_x_continuous(breaks = seq(18, 70, by = 10))
+theme_minimal()
+
+"Método de pago"
+ggplot(df_method %>% filter(!is.na(payment_method)), aes(x = "", y = n, fill = payment_method)) +
+  geom_bar(stat = "identity", width = 1) +  
+  coord_polar(theta = "y") +  
+  labs(title = "Distribución por método de pago") +
+  theme_void() +
+  geom_text(aes(label = paste0(percentage, "%")), 
+            position = position_stack(vjust = 0.5), 
+            color = "white", size = 5)
+
+"Compras por género"
+ggplot(compras_por_genero_categoria %>% filter(!is.na(gender) & !is.na(category)), aes(x = category, y = transacciones, fill = gender)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Compras por género y categoría de producto",
+       x = "Categoría",
+       y = "Número de transacciones",
+       fill = "Género") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+"Ventas en centros comerciales"
+ggplot(ventas_por_mall, aes(x = shopping_mall, y = total_quantity, fill = shopping_mall)) +
+  geom_bar(stat = "identity") + 
+  geom_text(aes(label = total_quantity), vjusto = -0.5, color = "black", size = 4) +
+  labs(title = "Total de artículos vendidos por centro comercial",
+       x = "Centro comercial",
+       y = "Total de artículos vendidos",
+       fill = "Centro comercial") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+"Ventas en centro comercial por categoría"
+treemap(df_no_da,
+        index = c("shopping_mall", "category"),
+        vSize = "quantity",
+        title = "Distribución de compras por centro comercial y categoría")
+
+"Gráfico de ventas por mes"
+ggplot(ventas_por_mes, aes(x = mes, y = ventas)) +
+  geom_line(color = "steelblue", size = 1) + 
+  geom_point(color = "red", size = 3) + 
+  labs(title = "Histórico ventas",
+       x = "Mes",
+       y = "Total de ventas (cantidad de productos)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+"Gráfico de ventas anuales por género"
+ggplot(ventas_por_año_genero %>% filter(!is.na(gender)), aes(x = factor(año), y = ventas, fill = gender)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_text(aes(label = ventas), position = position_dodge(width = 0.9), vjust = -0.5, size = 4) +
+  labs(title = "Ventas por año y género",
+       x = "Año",
+       y = "Total de ventas (cantidad de productos)",
+       fill = "Género") +
+  theme_minimal()
+```
+
+<br/><br/>
+
+# *Paso 10*: Explicación de patrones y tendencias
+
+En el presente informe se exponen las tendencias encontradas luego de realizar un análisis exploratorio a los datos dados. Dentro de este se pueden ver las ventas realizadas en distintos centros comerciales en Estambul.
+
+En el presente informe se verán datos por género, productos, edades y centros comerciales. Estas categorías son las que se consideraron más importantes o fueron más llamativas para explicar los resultados de los datos. De esta manera, se puede ver que, por ejemplo, más mujeres compran, en cantidad de clientes, pero los hombres compran más cantidades. También, se pueden ver los productos más vendidos y los lugares donde más fueron vendidos.
+
+
+Los clientes tuvieron edades entre 18 y 69 años. Esta distribución es relativamente normal. Si bien, no se grafica una pirámide poblacional, se puede ver que hay una mayor proporción en edades entre 28 y 58 años. Los jóvenes adultos, que van entre los 18 y 28 años son menores y las edades mayores son una minoría. Este comportamiento de "campana" muestra una distribución relativamente normal.
+
+
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+ggplot(df_no_da, aes(x = age)) +
+  geom_histogram(binwidth = 10, fill = "gray", color = "black") +
+  labs(title = "Gráfico 1. Distribución de la edad de los clientes", x = "Edad de los clientes", y = "Cantidad de clientes") +
+  scale_x_continuous(breaks = seq(18, 70, by = 10))
+theme_minimal()
+```
+
+Los datos anteriores se desagregan en hombres y mujeres. Estos dos grupos poblacionales se dividen así: cerca del 60 % son mujeres y el 40 % son hombres. Esto podría explicar las categorías de productos que más fueron vendidos en el periodo analizado. Además, el saber que la población es mayoritariamente femenina puede abrir una ventana de oportunidad para fortalcer productos que sean atractivos para este segemento poblacional y también para retener a los hombres y, eventualmente, atraer más mediante estrategias.
+
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+ggplot(df_gender, aes(x = "", y = n, fill = gender)) +
+  geom_bar(stat = "identity", width = 1) +  
+  coord_polar(theta = "y") +  
+  labs(title = "Gráfico 2. Distribución por sexo de los clientes") +
+  theme_void() +
+  geom_text(aes(label = paste0(percentage, "%")), 
+            position = position_stack(vjust = 0.5), 
+            color = "white", size = 5)
+```
+
+
+La forma de pago que prefieren los clientes ha sido efectivo, seguido del uso de tarjeta de crédito. Esto puede ser el resultado de la bancarización de las personas o de la confianza de medios electrónicos de pago o distintos al tradicional intercambio de moneda por producto. Además, el uso de tarjetas crédito sobre débito también puede ser el resultado de ofertas o beneficios que otorguen los bancos a los usuarios por el uso de estos medios, sumado a motivos de seguridad.
+
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+ggplot(df_method %>% filter(!is.na(payment_method)), aes(x = "", y = n, fill = payment_method)) +
+  geom_bar(stat = "identity", width = 1) +  
+  coord_polar(theta = "y") +  
+  labs(title = "Gráfico 3. Método de pago") +
+  theme_void() +
+  geom_text(aes(label = paste0(percentage, "%")), 
+            position = position_stack(vjust = 0.5), 
+            color = "white", size = 5)
+```
+
+En cuanto a categorías compra, las mujeres, que son la mayor cantidad de clientes, son quienes compran más en todas las categorías. Los artículos que más son adquiridos por todas las personas, en general es ropa, seguido de comida. Lo que menos se vende son libros. Con esta información se pueden desarrollar estrategias para potenciar las categorías menos vendidas y fortalecer las que ya tienen buenos números.
+
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+
+
+ggplot(compras_por_genero_categoria %>% filter(!is.na(gender) & !is.na(category)), aes(x = category, y = transacciones, fill = gender)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Gráfico 4. Compras por género y categoría de producto",
+       x = "Producto",
+       y = "Número de transacciones",
+       fill = "Género") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+
+las ventas realizadas en los centros comerciales presenta una distribución normal, en forma de campana hacia el centro. Además, esta gráfica muestra que Kanion y Mall of Istambul los que presentan la mayor cantidad de ventas con casi 110 000 ventas del total. Smaar Square Mall es el que menos ventas obtuvo durante el periodo analizado.
+
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+
+
+ggplot(ventas_por_mall, aes(x = shopping_mall, y = total_quantity, fill = shopping_mall)) +
+  geom_bar(stat = "identity") + 
+  geom_text(aes(label = total_quantity), vjusto = 0.5, color = "black", size = 4) +
+  labs(title = "Gráfico 5. Total de ventas en los centros comerciales",
+       x = "Centro comercial",
+       y = "Total de artículos vendidos",
+       fill = "Centro comercial") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+
+Al analizar las categorías vendidas se evidencia el mismo comportamiento en las categorías en los centros comerciales, por lo menos en las más vendidas. En todos, la ropa constituyó el ítem más comercializado, seguido de cosméticos. Comida varía, pero en algunos, como en Mall of Istambul, Kanyon, Metro city y Metropol Avm es una parte relativamente importante. Libros y zapatos siguen siguendo los ítems con menor movimiento en todos los casos.
+
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+
+treemap(df_no_da,
+        index = c("shopping_mall", "category"),
+        vSize = "quantity",
+        title = "Gráfico 6. Ventas en centro comercial por categoría")
+```
+
+Se puede evidenciar como tendencia que no el nivel de ventas presentadas en el periodo analizado es relativamente normal, salvo con periodos donde es más bajo. Sin embargo, a simple vista no parece haber periodos de tiempo en el que alguna festividad o episodio similar explique un comportamiento extraño. Por consiguiente, se puede determinar que en este tipo de sucesos son sostenibles en el tiempo.
+
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+
+ggplot(ventas_por_mes, aes(x = mes, y = ventas)) +
+  geom_line(color = "steelblue", size = 1) + 
+  geom_point(color = "red", size = 3) + 
+  labs(title = "Gráfico 7. Ventas por mes",
+       x = "Mes",
+       y = "Total de ventas (cantidad de productos)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+Estas ventas por año demuestran, como se ha mencionado en otros apartes del informe, que las muejes son significan la mayor cantidad de clientes y de ventas en cada año estudiado, con notable diferencia en comparación con los hombres. La diferencia con el último periodo es el momento en que se tomaron los datos. Sin embargo, dada la gráfica anterior, se puede concluir que hay un comportamiento normal en estos datos.
+
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+
+ggplot(ventas_por_año_genero %>% filter(!is.na(gender)), aes(x = factor(año), y = ventas, fill = gender)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_text(aes(label = ventas), position = position_dodge(width = 0.9), vjust = -0.5, size = 4) +
+  labs(title = "Gráfico 8. Ventas por año y género",
+       x = "Año",
+       y = "Total de productos vendidos",
+       fill = "Género") +
+  theme_minimal()
+```
+
+
+# *Conclusión*
+
+Finalmente, se pueden concluir varias cosas de este set de datos. Por un lado, la mayoría de clientes son mujeres y lo que más se vende son prendas de vestir, ropa, seguido de cosméticos y comida. Esto, a priori, representa, o puede hacerlo, una correlación entre género y productos adquiridos en algunos ítems. En segundo lugar, los clientes son jóvenes, la mayoría tienen entre 18 y 48 años; la edad promedio es de 43 años de edad.
+
+En todos los centros comerciales se ha visto una relación similar: la ropa es el ítem que más se vende y los zapatos lo que menos. Con estos datos se pueden destinar distintas campañas a estos segmentos poblacionales, por edad o por sexo. 
+
+Las mujeres son el segmento poblacional de clientes que mayor cantidad de compras realizó a lo largo de cada periodo estudiado y presentan diferencias con los hombres.
+
+
+
+<br/><br/>
+#### *Bibliografía*
+
+Muñoz, J y Álvarez, E. (2009). Métodos de imputación para el tratamiento de datos faltantes: Aplicación mediante R/Splus. Revista de Métodos Cuantitativos para la Economía y la Empresa. (7), pp. 3-10. Disponible en: www.upo.es/revistas/index.php/RevMetCuant/article/view/2120/1689
