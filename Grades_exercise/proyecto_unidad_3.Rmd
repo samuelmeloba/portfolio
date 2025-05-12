@@ -1,0 +1,416 @@
+---
+title: "project_unit_3"
+output:
+  html_document: default
+  pdf_document: default
+  autor: Samuel Melo Balcázar
+date: "2025-04-16"
+---
+
+```{r setup, include=FALSE}
+#Libraries
+library(skimr)
+library(tidyverse)
+library(ggplot2)
+library(GGally)
+library(broom)
+library(performance)
+library(kableExtra)
+library(patchwork)
+library(lmtest)
+knitr::opts_chunk$set(echo = FALSE, comment = NA, message = FALSE, warming = FALSE)
+source("read_csv.R")
+```
+
+Esta actividad tiene como fin desarrollar un modelo de regresión simple con datos obtenidos del respositorio de datos UC Irvine. Para este ejercicio se han utilizado las calificaciones de las asignatura de Matemáticas y Portugués de dos escuelas de secundaria de Portugal. El conjunto de datos no cuenta con datos perdidos.
+
+En este informe se empieza por crear dos tablas que muestran las variables cuantitativas que tiene cada conjunto de datos. Con esta información se pueden empezar a establecer posibles correlaciones presentes en las variables para posteriormente realizar el modelo de regresión lineal.
+
+Para este ejercicio solo se utilizarán las variables cualitativas para realizar el modelo, ya que es una regresión lineal simple.
+
+El problema a resolver en este ejercicio es la predicción de la nota correspondiente al último o tercer periodo partiendo de las notas anteriores, según el nivel de la correlación existente entre las variables.
+
+</br> </br>
+
+# Exploración de datos
+
+Este es el primer paso en cualquier proyecto, pues es necesario explorar el conjunto de datos para conocer las variables que posee cada conjunto de datos y el tipo de estas. En este caso, para practicidad, no se manipula el merge hecho originalmente, sino que se usa cada una de las bases para aplicar los modelos a cada base.
+
+En este primer momento, se filtran las variables numéricas, ya que, como se dijo al inicio, solo se usarán los datos cuantitativos en este modelo.
+
+
+```{r}
+# Filtro a datos numéricos
+student_por_num <- select(student_por, where(is.numeric))
+student_mat_num <- select(student_mat, where(is.numeric))
+```
+
+Esta tabla corresponde al resumen de las variables cuantitativas que tiene el conjunto de datos de estudiantes de la asignatura de Portugués. En esta se puede observar que el grupo de estudiantes está conformado por personas entre los 15 y 22 años de edad. Esta distribución es coherente con el universo que compone el grupo de datos, puesto que son datos extraídos de escuelas de Portugal.
+
+```{r}
+# Resumen de datos numéricos de Portugués
+kable(summary(student_por_num))
+```
+En cuanto a las calificaciones (G1, G2 y G3), se puede notar que los estudiantes obtuvieron calificaciones de 0 a 19 puntos. En promedio, el periodo con una nota más alta es el tercero, con una media de 11,91 y mediana de 12. Salvo el primer cuartil, los demás presentan calificaciones más altas que los otros.
+
+
+La siguiente tabla corresponde al resumen de las variables cuantitativas que tiene el conjunto de datos de estudiantes de la asignatura de Matemáticas. Al igual que el anterior, presenta un grupo de estudiantes que va desde los 15 a los 22 años de edad.
+
+```{r}
+# Resumen de datos numéricos de Matemáticas
+kable(summary(student_mat_num))
+```
+A diferencia con las notas de Portugués, las calificaciones en promedio fueron más altas en el primer periodo, pues no se obtuvieron calificaciones de cero. Sin embargo, en el tercero hubo calificaciones más altas, de veinte puntos, pero también de cero. La mediana ha sido la misma en todos los casos.
+
+Ahora bien, se parte del hecho que cada cero es una calificación legítima, no una ausencia de dato. Es decir, por diversos motivos, que pueden ser también que los estudiantes no se presentaron, hubo alguna penalidad u otro motivo; es calificación puesta por el docente, no ausencia de dato.
+
+Los datos anteriores fueron filtrados, de tal forma que se obtienen solamente los datos cuantitativos, ya que, para este caso, el modelo a crear solo usará este tipo de datos y para que las primeras tablas realizadas fueran más sencillas de visualizar. En adición a lo anterior, en las tablas se puede observar que hay estudiantes que obtuvieron calificaciones de cero, de donde se entiende que hay datos atípicos (outliers), razón por la cual se omiten a continuación para evitar dificultades con el modelo.
+
+```{r}
+# Limpieza
+# se filtran los datos de cero en matemáticas por se los outliers
+student_mat_num_filtrado <- filter(student_mat_num, G1 > 0, G2 > 0, G3 > 0)
+
+
+# quitar oulierts
+remove_outliers_iqr <- function(x) {
+  Q1 <- quantile(x, 0.25, na.rm = TRUE)
+  Q3 <- quantile(x, 0.75, na.rm = TRUE)
+  IQR_value <- Q3 - Q1
+  lower <- Q1 - 1.5 * IQR_value
+  upper <- Q3 + 1.5 * IQR_value
+  x >= lower & x <= upper
+}
+
+# aplicar
+student_por_num_filtrado <- student_por_num %>%
+  filter(
+    remove_outliers_iqr(G1),
+    remove_outliers_iqr(G2),
+    remove_outliers_iqr(G3)
+  )
+```
+
+En los pasos anteriores se han seleccionado solo los valores cuantitativos, numéricos, y luego se filtraron en las calificaciones, que son las variables de interés, para suprimir los valores atípicos en este modelo. El siguiente paso es hacer una gráfica para entender el coheficiente correlación de Pearson, distribución y linealidad que tienen las variables entres sí. Con este paso, se puede observar si se cumplen algunos requisitos, como el R cuadrado.
+
+En síntesis, permite conocer si existe o no una relación entre las variables, positiva o negativa, que lleva a establecer si cuando se incrementa una variable se puede incrementar otra o disminuir; si el comportamiento de de las variables es el mismo, que se incrementan o disminuyen al mismo tiempo, o contrario, que una se incrementa y otra disminuye.
+
+```{r}
+# Correlaciones
+
+# creación de conjuntos de cada set de datos con las calificaciones para ver correlaciones entre estas.
+
+grades_mat <- student_mat_num_filtrado[student_mat_num_filtrado$G1 > 0 & student_mat_num_filtrado$G2 > 0 & student_mat_num_filtrado$G3 > 0, c("G1", "G2", "G3")]
+
+
+grades_por <- student_por_num_filtrado[student_por_num_filtrado$G1 > 0 & student_por_num_filtrado$G2 > 0 & student_por_num_filtrado$G3 > 0, c("G1", "G2", "G3")]
+
+
+# Correlaciones
+# notas de matemáticas:
+GGally::ggpairs(grades_mat,
+                lower = list(continuous = "smooth"),
+                diag = list(continuous = "barDiag"),
+                upper = list(continuous = wrap("cor", size = 4)))
+```
+
+```{r}
+# Boxplot de calificaciones de Matemáticas
+
+# Step 1: Add subject identifier
+grades_mat$subject <- "Math"
+grades_por$subject <- "Portuguese"
+
+# Step 2: Pivot to long format
+grades_mat_long <- pivot_longer(grades_mat, cols = c(G1, G2, G3),
+                                names_to = "Grade", values_to = "Score")
+
+grades_por_long <- pivot_longer(grades_por, cols = c(G1, G2, G3),
+                                names_to = "Grade", values_to = "Score")
+
+# Step 3: Combine both long-format datasets
+combined <- bind_rows(grades_mat_long, grades_por_long)
+
+# Step 4: Create the boxplot
+ggplot(combined, aes(x = Grade, y = Score, fill = subject)) +
+  geom_boxplot() +
+  labs(title = "Comparación de calificaciones por materia",
+       x = "Grade Component",
+       y = "Score") +
+  theme_minimal()
+
+```
+
+Los gráficos anteriores corresponden a Matemáticas, en donde se puede ver que
+
+
+
+```{r}
+# notas de portugués
+GGally::ggpairs(grades_por,
+                lower = list(continuous = "smooth"),
+                diag = list(continuous = "barDiag"),
+                upper = list(continuous = wrap("cor", size = 4)))
+```
+
+
+
+Teniendo en cuenta lo anterior, se puede ver en que las variables G3 y G2 tienen una correlación de 0,966 en la asignatura de Matemáticas; para Portugués es de 0,934. En ambos conjuntos de datos hay una correlación muy fuerte, de casi 1, lo que quiere decir que es casi exacta la relación entre varibales (como lo exhiben los gráficos de puntos).
+
+Otro aspecto a destacar de estos datos es que los histogranmas muestran que hay una distribución que tiende a normal entre las variables, relacionadas entre ellas. En cada variable adicional se puede evidenciar un comportamiento similar (como se muestra en los anexos).
+
+
+# Modelo de regresión lineal simple
+
+El modelo de regresión lineal simple es
+por ende, se busca explicar la relación que hay entre una variable dependiente el el conjunto de datos (Carrollo, 2011).
+
+Para este caso se ha seguido la siguiente fórmula: $Y = \beta_0 + \beta_1 + X$ en donde $\alpha$ es G3 y $\beta X$ es 
+
+```{r}
+# Modelo regresión lineal
+# Correlación de Pearson Matemáticas
+
+cor(student_mat_num_filtrado$G3, student_mat_num_filtrado$G1, use = "complete.obs")
+cor(student_mat_num_filtrado$G3, student_mat_num_filtrado$G2, use = "complete.obs")
+
+# Correlación de Pearson Portugués
+cor(student_por_num_filtrado$G3, student_por_num_filtrado$G1, use = "complete.obs")
+cor(student_por_num_filtrado$G3, student_por_num_filtrado$G2, use = "complete.obs")
+```
+
+La regresión lineal para el conjunto de datos de Matemáticas se muestra a continuación. Para este ejercicio se busca predecir la nota correspondiente a G3 partiendo de G2. Los resultados de este modelo se muestran a continuación.
+```{r}
+# Regresión Matemáticas
+modelo_mat <- lm(G3 ~ G2, data = student_mat_num_filtrado)
+summary(modelo_mat)
+```
+El resumen anterior explica que unos residuos de que llegan a casi 3 puntos (máximo de 2,80 y mínimo de -2,21), pero que la mayoría están entre -0,19 y 0,81 (que es bastante acertado). Sobre los coeficientes indican que, cuando el valor estimado del intercepto es cero. Se espera que por cada punto que crezca G2, G3 lo haga en 0,99 puntos. el valor de pr muestra que es altamente significativo estadísticamente; en otras palabras, hay una alta evidencia de que G2 esté relacionado con G3.
+
+Este modelo permite explicar en un 93,23 % la variabilidad de las notas de la variable G3. Teniendo en cuenta que esto es un ejercicio con solo una variable, es un buen resultado. El error estándar es de 0,84, lo que es pequeño dado que la escala es hasta veinte.
+
+Este modelo es altamente significativo y respresenta una relación casi de 1:1.
+
+
+La regresión lineal para el conjunto de datos de Portugués se muestra a continuación. Para este ejercicio se busca predecir la nota correspondiente a G3 partiendo de G2. Los resultados de este modelo se muestran a continuación.
+
+```{r}
+#Regresión Portugués
+modelo_por <- lm(G3 ~ G2, data = student_por_num_filtrado)
+summary(modelo_por)
+```
+
+Este resumen muestra el resultado del modelo que busca predecir la nota G3 a partir de la nota G2. A diferencia de lo que ocurre con la asignatura anterior, en este caso hay unos residuos mayores, ya que tiene límites de entre 5,36 y -3,62, y la mayoría de los datos se encuentran entre -4,84 y 0,56. En otras palabras, para este caso hay cifras que no se ajustan tan bien como en el anterior caso, pero se puede considerar como bueno por. Sobre los coeficientes se espera que por cada punto que suba G3, G2 lo haga en 0,95. El error estándar es de 0,89, que aunque es mayor que el anterior caso, sigue siendo bastante bueno dadas las características que tiene el modelo.
+
+Aunque este modelo tiene unos datos menores al de Matemáticas, en este se pueden explicar las calificaciones en un 88,87 %, lo que es destacable. 
+
+Ambos modelos muestran, como se expuso en el inicio de este informe, ambas variables, que son calificaciones, tienen una relación muy fuerte por su naturaleza. Ahora bien, es necesario realizar un análisis de diagnóstico, el cual se muestra a continuación. 
+
+
+# Análisis de diagnóstico
+
+```{r}
+# diagnóstico del modelo
+# modelo de Matemáticas
+par(mfrow = c(2, 2))
+plot(modelo_mat, col = "blue")
+```
+En esta gráfica, que corresponde a Matemáticas, expone que hay los residuos están dispersos y no tienen una distribución relativamente clara. Hora bien, en los dos de abajo se puede ver una concentración de los valores hacia la izquierda de cada gráfico; en otras palabras se ve lo que podría ser una heterocedasticidad en la escala.
+Sobre los residuos se puede observar que la nube está distribuida a lo largo de la línea y no hay línea pronunciada, por lo que la varianza es relativamente constante.
+Sobre el Q-Q plot se pueden ver que hay datos que pueden ser atípicos o no se alinean con la línea planteada. Sin embargo, la mayoría están en la línea, por loq ue es bastante razonable la normalidad de los residuos (más que en el siguiente caso). Esto puede tener explicación, en este caso, en que este modelo toma solo una variable.
+Finalmente, se puede ver que no hay puntos cercanos o que hayan traspasado la línea de Cook's Distance.
+
+```{r}
+# modelo de Portugués
+par(mfrow = c(2, 2))
+plot(modelo_por, col = "red")
+```
+La gráfica de residuos contra valores ajustados muestra que hay curva en la nube de los puntos. Lo anterior sugiere que no hay linealidad en este modelo, lo que puede darse por mala especificación del modelo. De igual manera, se puede evidenciar algunos datos que pueden ser atípicos. Por su parte, el gráfico QQ muestra que, aunque la mayoría de puntos se acercan a la línea, se presentan algunos que pueden ser atípicos, como en el aterior, lo que puede afectar los intérvalos de confianza, pues los residuos no son normales o no tienden a la normalidad. La escala muestra al punto 62 con un valor alto y apalancamiento moderado.
+Ahora bien, estos coeficientes son válidos aún y no son sesgados, a pesar de no tender a la normalidad.
+
+
+
+# Análisis de datos atípicos
+
+```{r}
+# Valores ajustados
+ajuste_mat <- modelo_mat$fitted.values
+
+ajuste_por <- modelo_por$fitted.values
+
+# Extracción de residuales
+
+resid_mat <- modelo_mat$residuals
+
+resid_por <- modelo_por$residuals
+
+# Predicciones
+
+student_mat_num_filtrado$predicciones <- predict(modelo_mat)
+
+student_por_num_filtrado$predicciones <- predict(modelo_por)
+
+# dataframe con los datos de cada modelo
+  #Matemáticas
+resultados_mat <- data.frame(
+  G2 = student_mat_num_filtrado$G2,
+  G3 = student_mat_num_filtrado$G3,
+  predicciones = ajuste_mat,
+  residual = resid_mat
+)
+
+print(head(resultados_mat))
+```
+En esta tabla se pueden ver las primeras seis filas usando el modelo para la calificación de la asignatura de Matemáticas. En esta se puede ver que, aunque el modelo no logra predecir con exactitud la nota que se obtendrá, sí se obtiene un valor relativamente cercano (menor de dos puntos positivos de un punto negativo), tal como se vio en los gráficos anteriores.
+
+```{r}
+  #Portugués
+resultados_por <- data.frame(
+  G2 = student_por_num_filtrado$G2,
+  G3 = student_por_num_filtrado$G3,
+  predicciones = ajuste_por,
+  residual = resid_por
+)
+print(head(resultados_por))
+```
+En el caso de Portugués, vemos que también hay una predicción que, aunque no es perfecta, es cercana al valor real (menos de un punto positivo y menos de uno y medio negativo), con lo que también se observa un comportamiento similar al de los gráficos anteriormente expuestos.
+
+
+
+```{r}
+# recta de regresión
+  # Matemáticas
+ggplot(student_mat_num_filtrado, aes(x = G2, y = G3)) +
+  geom_smooth(method = "lm", se = FALSE, color = "lightgreen") + #color de la regresión
+  geom_segment(aes(xend = G1, yend = predicciones), col = "red", lty = "dashed") + # residuales línea roja
+  geom_point() + #Puntos de datos observados
+  geom_point(aes(y = predicciones), col = "red") + #puntos de predicción en rojo
+  theme_light() #mejora la visualización
+```
+En esta gráfca se puede observar la forma en que se relaciona G3 con G2 de la asignatura de Matemáticas, como el presente modelo lo predice. Aquí se puede ilustrar que hay una relación fuerte entre las variables (como se explica la inicio de este documento), las predicciones son más o menos precisas y que los errores no parecieran que tuvieran patrón. Lo anterior quiere decir que las predicciones son bastante buenas.
+
+
+```{r}
+  # Portugués
+ggplot(student_por_num_filtrado, aes(x = G2, y = G3)) +
+  geom_smooth(method = "lm", se = FALSE, color = "lightblue") + #color de la regresión
+  geom_segment(aes(xend = G1, yend = predicciones), col = "red", lty = "dashed") + # residuales línea roja
+  geom_point() + #Puntos de datos observados
+  geom_point(aes(y = predicciones), col = "red") + #puntos de predicción en rojo
+  theme_light() #mejora la visualización
+```
+En esta gráfca se puede observar la forma en que se relaciona G3 con G2 para la asignatura de Portugués, como el presente modelo lo predice. Aquí se puede ilustrar que hay una relación fuerte entre las variables (como se explica la inicio de este documento), las predicciones son más o menos precisas y que los errores no parecieran que tuvieran patrón. Lo anterior quiere decir que las predicciones son bastante buenas.
+
+```{r}
+#test de normalidad
+  # Matemáticas
+shapiro.test(resid_mat)
+```
+De este test de la asignatura de Matemáticas se puede determinar estadísticamente que los residuos no tienen una distribución normal, como se menciona previamente. Por esto, no se puede tomar la hipótesis nula. Ahora bien, es necesario mencionar nuevamente que esto se presenta puesto que, para efectos de la asignatura, se han tomado solo dos variables en el modelo, por lo que estos últimos puntos presentan este comportamiento.
+
+```{r}
+  # Portugués
+shapiro.test(resid_por)
+```
+De este test de la asignatura de Portugués se puede determinar estadísticamente que los residuos no tienen una distribución normal, como se menciona previamente. Por esto, no se puede tomar la hipótesis nula. Ahora bien, es necesario mencionar nuevamente que esto se presenta puesto que, para efectos de la asignatura, se han tomado solo dos variables en el modelo, por lo que estos últimos puntos presentan este comportamiento.
+
+
+```{r}
+#test de homocedasticidad
+
+# Matemáticas
+bptest(modelo_mat)
+```
+Para este caso, se muestra con el Breusch-Pagan test de la asignatura de Matemáticas que no se presenta una homocedasticidad, que los errores no tienen varianza constante y que en algunas partes los errores son o más grandes o más pequeños.
+
+
+
+```{r}
+  # Portugués
+bptest(modelo_por)
+```
+Para este caso, se muestra co el Breusch-Pagan test de la asignatura de Portugués que no se presenta una homocedasticidad, que los errores no tienen varianza constante y que en algunas partes los errores son o más grandes o más pequeños.
+
+
+
+# Intervalos de confianza
+Es importante aclarar que, para el presente ejercicio, el modelo de regresión se construyó únicamente con dos variables (G2 como predictora y G3 como respuesta en cada asignatura). Debido a esta simplicidad, se presentan limitaciones a la hora de calcular intervalos de confianza con plena validez, especialmente si no se cumplen los supuestos fundamentales de la regresión, como la normalidad de los residuos y la homocedasticidad.
+
+Aunque en otros casos sería posible ajustar el modelo incorporando más variables explicativas o aplicando transformaciones en el código, en este ejemplo (dado su carácter introductorio y práctico) se ha decidido mantener el enfoque simple. Por esta razón, esto restringe la posibilidad de mejorar la precisión del modelo o de obtener inferencias más robustas.
+
+# Discusión y conclusiones
+
+Aunque existe una correlación fuerte entre la variable G3 y las variables G2 y G1, los supuestos de normalidad (evaluado con la prueba de Shapiro-Wilk) y homocedasticidad (evaluado con la prueba de Breusch-Pagan) no se cumplen. Esto puede deberse, en parte, a que el modelo incluye un número reducido de variables explicativas, que son G2 y G4. Lo anterior limita la capacidad para capturar toda la variabilidad de la variable dependiente.
+
+A pesar de haberse intentado aplicar transformaciones (como el logaritmo) y otras estrategias para mejorar el ajuste del modelo, no fue posible cumplir completamente con los supuestos clásicos de la regresión lineal, quizás por los dicho previamente.
+
+No obstante, dado que se trata de un ejercicio con fines académicos y prácticos, se conserva el modelo en su forma original.
+
+La alta correlación observada entre las calificaciones (G1, G2 y G3) es consistente con la lógica del sistema educativo, en el que las notas de cada periodo reflejan una progresión continua del desempeño estudiantil. En este sentido, no sería posible contar con la nota final (G3) sin haber pasado previamente por los periodos anteriores (G1 y G2), como también lo han planteado Cortes y Silva (2008). En este orden de ideas, estas variables tienen una relación natural, por ello su correlación es tan fuerte.
+
+
+# Referencias bibliográficas
+
+Carrollo, M. (2011). Regresión lineal simple. Departamento de Estadística e Investigación Operativa. Recuperado de: http://eio.usc.es/eipc1/BASE/BASEMASTER/FORMULARIOS-PHP-DPTO/MATERIALES/Mat_50140116_Regr_%20simple_2011_12.pdf
+
+
+Cortez, P. y Silva, A. (2008). Student Performance [Dataset]. UCI Machine Learning Repository. doi://doi.org/10.24432/C5TG7T.
+
+# Anexos
+
+En este apartado se escribe todo el código que no se usó en el cuerpo del informe por dos razones: la primera,  los requisitos de extensión para esta actividad no permiten que estén ahí; la segunda, no son tan relevantes para el informe, aunque dan cuenta de algunas características del conjunto de datos escogido para esta actividad.
+
+El primer código que se escribe es aquel que permite observar las variables cuantitativas escogidas del conjunto de datos que corresponde a la asignatura de Portugués. Para esta variable se ha escogido usar el color "lightgreen" para diferenciarla de Matemáticas. Las variables escogidas son edad (age), tiempo dedicado a estudiar (studytime), el corte 1 (G1), el corte 2 (G2) y le corte 3 (G3)
+
+```{r}
+# Portugués
+por1 <- ggplot(student_por_num_filtrado, aes(x = age)) + geom_bar(fill = "lightgreen", color = "black") + theme_minimal()
+por2 <- ggplot(student_por_num_filtrado, aes(x = studytime)) + geom_bar(fill = "lightgreen", color = "black") + theme_minimal()
+por3 <- ggplot(student_por_num_filtrado, aes(x = G1)) + geom_bar(fill = "lightgreen", color = "black") + theme_minimal()
+por4 <- ggplot(student_por_num_filtrado, aes(x = G2)) + geom_bar(fill = "lightgreen", color = "black") + theme_minimal()
+por5 <- ggplot(student_por_num_filtrado, aes(x = G3)) + geom_bar(fill = "lightgreen", color = "black") + theme_minimal()
+
+(por1 | por2 | por3)/(por4 | por5)
+```
+
+El siguiente código es el que permite, al igual que el anterior, conocer las variables cuantitativas escogidas del conjunto de datos utilizado en el presente ejercicio. Para este caso, ha sido de la asignatura de Matemáticas, para la cual se usa el color "lightblue". Las variables escogidas son edad (age), tiempo dedicado a estudiar (studytime), el corte 1 (G1), el corte 2 (G2) y le corte 3 (G3)
+```{r}
+# Matemáticas
+mat1 <- ggplot(student_mat_num_filtrado, aes(x = age)) + geom_bar(fill = "lightblue", color = "black") + theme_minimal()
+mat2 <- ggplot(student_mat_num_filtrado, aes(x = studytime)) + geom_bar(fill = "lightblue", color = "black") + theme_minimal()
+mat3 <- ggplot(student_mat_num_filtrado, aes(x = G1)) + geom_bar(fill = "lightblue", color = "black") + theme_minimal()
+mat4 <- ggplot(student_mat_num_filtrado, aes(x = G2)) + geom_bar(fill = "lightblue", color = "black") + theme_minimal()
+mat5 <- ggplot(student_mat_num_filtrado, aes(x = G3)) + geom_bar(fill = "lightblue", color = "black") + theme_minimal()
+
+(mat1 | mat2 | mat3)/(mat4 | mat5)
+```
+
+
+```{r}
+# gráfico de residuos y valors ajustados
+  # Matemáticas
+ggplot(resultados_mat, aes(x = predicciones, y = residual)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  labs(title = "Residuos vs. valores ajustados", x = "Valores ajustados", y = "Residuos") +
+  theme_minimal()
+
+  # Portugués
+ggplot(resultados_por, aes(x = predicciones, y = residual)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  labs(title = "Residuos vs. valores ajustados", x = "Valores ajustados", y = "Residuos") +
+  theme_minimal()
+
+
+# Histograma de residuos
+  #Matemáticas
+qqnorm(resid_mat)
+qqline(resid_mat, col = "red")
+
+  # Portugués
+qqnorm(resid_por)
+qqline(resid_por, col = "blue")
+```
+
+

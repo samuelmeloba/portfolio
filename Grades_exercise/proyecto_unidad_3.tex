@@ -1,0 +1,1039 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={project\_unit\_3},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{project\_unit\_3}
+\author{}
+\date{\vspace{-2.5em}2025-04-16}
+
+\begin{document}
+\maketitle
+
+Esta actividad tiene como fin desarrollar un modelo de regresión simple
+con datos obtenidos del respositorio de datos UC Irvine. Para este
+ejercicio se han utilizado las calificaciones de las asignatura de
+Matemáticas y Portugués de dos escuelas de secundaria de Portugal. El
+conjunto de datos no cuenta con datos perdidos.
+
+En este informe se empieza por crear dos tablas que muestran las
+variables cuantitativas que tiene cada conjunto de datos. Con esta
+información se pueden empezar a establecer posibles correlaciones
+presentes en las variables para posteriormente realizar el modelo de
+regresión lineal.
+
+Para este ejercicio solo se utilizarán las variables cualitativas para
+realizar el modelo, ya que es una regresión lineal simple.
+
+El problema a resolver en este ejercicio es la predicción de la nota
+correspondiente al último o tercer periodo partiendo de las notas
+anteriores, según el nivel de la correlación existente entre las
+variables.
+
+\section{Exploración de datos}\label{exploraciuxf3n-de-datos}
+
+Este es el primer paso en cualquier proyecto, pues es necesario explorar
+el conjunto de datos para conocer las variables que posee cada conjunto
+de datos y el tipo de estas. En este caso, para practicidad, no se
+manipula el merge hecho originalmente, sino que se usa cada una de las
+bases para aplicar los modelos a cada base.
+
+En este primer momento, se filtran las variables numéricas, ya que, como
+se dijo al inicio, solo se usarán los datos cuantitativos en este
+modelo.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{student\_por\_num }\OtherTok{\textless{}{-}} \FunctionTok{select}\NormalTok{(student\_por, }\FunctionTok{where}\NormalTok{(is.numeric))}
+\NormalTok{student\_mat\_num }\OtherTok{\textless{}{-}} \FunctionTok{select}\NormalTok{(student\_mat, }\FunctionTok{where}\NormalTok{(is.numeric))}
+
+\FunctionTok{kable}\NormalTok{(}\FunctionTok{summary}\NormalTok{(student\_por\_num))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 32\tabcolsep) * \real{0.0133}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 32\tabcolsep) * \real{0.0619}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 32\tabcolsep) * \real{0.0619}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 32\tabcolsep) * \real{0.0619}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 32\tabcolsep) * \real{0.0619}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 32\tabcolsep) * \real{0.0619}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 32\tabcolsep) * \real{0.0664}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 32\tabcolsep) * \real{0.0619}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 32\tabcolsep) * \real{0.0575}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 32\tabcolsep) * \real{0.0619}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 32\tabcolsep) * \real{0.0619}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 32\tabcolsep) * \real{0.0575}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 32\tabcolsep) * \real{0.0619}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 32\tabcolsep) * \real{0.0664}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 32\tabcolsep) * \real{0.0575}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 32\tabcolsep) * \real{0.0619}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 32\tabcolsep) * \real{0.0619}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+age
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Medu
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Fedu
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+traveltime
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+studytime
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+failures
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+famrel
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+freetime
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+goout
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Dalc
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Walc
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+health
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+absences
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+G1
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+G2
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+G3
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+& Min. :15.00 & Min. :0.000 & Min. :0.000 & Min. :1.000 & Min. :1.000 &
+Min. :0.0000 & Min. :1.000 & Min. :1.00 & Min. :1.000 & Min. :1.000 &
+Min. :1.00 & Min. :1.000 & Min. : 0.000 & Min. : 0.0 & Min. : 0.00 &
+Min. : 0.00 \\
+& 1st Qu.:16.00 & 1st Qu.:2.000 & 1st Qu.:1.000 & 1st Qu.:1.000 & 1st
+Qu.:1.000 & 1st Qu.:0.0000 & 1st Qu.:4.000 & 1st Qu.:3.00 & 1st
+Qu.:2.000 & 1st Qu.:1.000 & 1st Qu.:1.00 & 1st Qu.:2.000 & 1st Qu.:
+0.000 & 1st Qu.:10.0 & 1st Qu.:10.00 & 1st Qu.:10.00 \\
+& Median :17.00 & Median :2.000 & Median :2.000 & Median :1.000 & Median
+:2.000 & Median :0.0000 & Median :4.000 & Median :3.00 & Median :3.000 &
+Median :1.000 & Median :2.00 & Median :4.000 & Median : 2.000 & Median
+:11.0 & Median :11.00 & Median :12.00 \\
+& Mean :16.74 & Mean :2.515 & Mean :2.307 & Mean :1.569 & Mean :1.931 &
+Mean :0.2219 & Mean :3.931 & Mean :3.18 & Mean :3.185 & Mean :1.502 &
+Mean :2.28 & Mean :3.536 & Mean : 3.659 & Mean :11.4 & Mean :11.57 &
+Mean :11.91 \\
+& 3rd Qu.:18.00 & 3rd Qu.:4.000 & 3rd Qu.:3.000 & 3rd Qu.:2.000 & 3rd
+Qu.:2.000 & 3rd Qu.:0.0000 & 3rd Qu.:5.000 & 3rd Qu.:4.00 & 3rd
+Qu.:4.000 & 3rd Qu.:2.000 & 3rd Qu.:3.00 & 3rd Qu.:5.000 & 3rd Qu.:
+6.000 & 3rd Qu.:13.0 & 3rd Qu.:13.00 & 3rd Qu.:14.00 \\
+& Max. :22.00 & Max. :4.000 & Max. :4.000 & Max. :4.000 & Max. :4.000 &
+Max. :3.0000 & Max. :5.000 & Max. :5.00 & Max. :5.000 & Max. :5.000 &
+Max. :5.00 & Max. :5.000 & Max. :32.000 & Max. :19.0 & Max. :19.00 &
+Max. :19.00 \\
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{kable}\NormalTok{(}\FunctionTok{summary}\NormalTok{(student\_mat\_num))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 32\tabcolsep) * \real{0.0132}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 32\tabcolsep) * \real{0.0570}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 32\tabcolsep) * \real{0.0614}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 32\tabcolsep) * \real{0.0614}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 32\tabcolsep) * \real{0.0614}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 32\tabcolsep) * \real{0.0614}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 32\tabcolsep) * \real{0.0658}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 32\tabcolsep) * \real{0.0614}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 32\tabcolsep) * \real{0.0614}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 32\tabcolsep) * \real{0.0614}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 32\tabcolsep) * \real{0.0614}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 32\tabcolsep) * \real{0.0614}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 32\tabcolsep) * \real{0.0614}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 32\tabcolsep) * \real{0.0658}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 32\tabcolsep) * \real{0.0614}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 32\tabcolsep) * \real{0.0614}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 32\tabcolsep) * \real{0.0614}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+age
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Medu
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Fedu
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+traveltime
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+studytime
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+failures
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+famrel
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+freetime
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+goout
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Dalc
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Walc
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+health
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+absences
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+G1
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+G2
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+G3
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+& Min. :15.0 & Min. :0.000 & Min. :0.000 & Min. :1.000 & Min. :1.000 &
+Min. :0.0000 & Min. :1.000 & Min. :1.000 & Min. :1.000 & Min. :1.000 &
+Min. :1.000 & Min. :1.000 & Min. : 0.000 & Min. : 3.00 & Min. : 0.00 &
+Min. : 0.00 \\
+& 1st Qu.:16.0 & 1st Qu.:2.000 & 1st Qu.:2.000 & 1st Qu.:1.000 & 1st
+Qu.:1.000 & 1st Qu.:0.0000 & 1st Qu.:4.000 & 1st Qu.:3.000 & 1st
+Qu.:2.000 & 1st Qu.:1.000 & 1st Qu.:1.000 & 1st Qu.:3.000 & 1st Qu.:
+0.000 & 1st Qu.: 8.00 & 1st Qu.: 9.00 & 1st Qu.: 8.00 \\
+& Median :17.0 & Median :3.000 & Median :2.000 & Median :1.000 & Median
+:2.000 & Median :0.0000 & Median :4.000 & Median :3.000 & Median :3.000
+& Median :1.000 & Median :2.000 & Median :4.000 & Median : 4.000 &
+Median :11.00 & Median :11.00 & Median :11.00 \\
+& Mean :16.7 & Mean :2.749 & Mean :2.522 & Mean :1.448 & Mean :2.035 &
+Mean :0.3342 & Mean :3.944 & Mean :3.235 & Mean :3.109 & Mean :1.481 &
+Mean :2.291 & Mean :3.554 & Mean : 5.709 & Mean :10.91 & Mean :10.71 &
+Mean :10.42 \\
+& 3rd Qu.:18.0 & 3rd Qu.:4.000 & 3rd Qu.:3.000 & 3rd Qu.:2.000 & 3rd
+Qu.:2.000 & 3rd Qu.:0.0000 & 3rd Qu.:5.000 & 3rd Qu.:4.000 & 3rd
+Qu.:4.000 & 3rd Qu.:2.000 & 3rd Qu.:3.000 & 3rd Qu.:5.000 & 3rd Qu.:
+8.000 & 3rd Qu.:13.00 & 3rd Qu.:13.00 & 3rd Qu.:14.00 \\
+& Max. :22.0 & Max. :4.000 & Max. :4.000 & Max. :4.000 & Max. :4.000 &
+Max. :3.0000 & Max. :5.000 & Max. :5.000 & Max. :5.000 & Max. :5.000 &
+Max. :5.000 & Max. :5.000 & Max. :75.000 & Max. :19.00 & Max. :19.00 &
+Max. :20.00 \\
+\end{longtable}
+
+La tabla anterior muestra que existen 382 registros, los estudiantes
+tienen entre 15 y 22 años, los tiempos de estudio varían entre 1 y 4
+horas y que más alumnos tuvieron de nota cero en cada periodo académico,
+comparado con la asginatura de portugués, como se ilustra a
+continuación. De lo anterior se destaca que hubo estudiantes que
+obtuvieron de calificación un cero (0). Estos datos, una vez se grafica,
+son atípicos, por lo que se debe tomar una decisión sobre estos. Para
+este caso, se considera que lo mejor es omitirlos para el análisis, no
+eliminarlos. ESta decisión se sustenta en el hecho de que no son datos
+inexistentes, sino que corresponden a calificaciones reales que pueden
+ser porque el estudiante no presentó el examen o cualquier otra
+consideración del o la docente del área.
+
+Por lo anterior, ya que interesa trabajar con las calificaciones de los
+estudiantes, se filtran las bases y se escogen solo las variables de
+calificaciones y se eomiten los valores que estén por encima de los
+límites superior e inferior de la base de la asignatura Portugués. Esto
+último se realiza porque es el conjunto de datos que presenta estos
+datos notablemente.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Limpieza}
+\CommentTok{\# se filtran los datos de cero en matemáticas por se los outliers}
+\NormalTok{student\_mat\_num\_filtrado }\OtherTok{\textless{}{-}} \FunctionTok{filter}\NormalTok{(student\_mat\_num, G1 }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{, G2 }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{, G3 }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{)}
+
+
+\CommentTok{\# Calcular los límites}
+\NormalTok{Q1 }\OtherTok{\textless{}{-}} \FunctionTok{quantile}\NormalTok{(student\_por\_num}\SpecialCharTok{$}\NormalTok{G3, }\FloatTok{0.25}\NormalTok{)}
+\NormalTok{Q3 }\OtherTok{\textless{}{-}} \FunctionTok{quantile}\NormalTok{(student\_por\_num}\SpecialCharTok{$}\NormalTok{G3, }\FloatTok{0.75}\NormalTok{)}
+\NormalTok{IQR\_value }\OtherTok{\textless{}{-}} \FunctionTok{IQR}\NormalTok{(student\_por\_num}\SpecialCharTok{$}\NormalTok{G3)}
+
+\CommentTok{\# Definir límites para detectar atípicos}
+\NormalTok{limite\_inferior }\OtherTok{\textless{}{-}}\NormalTok{ Q1 }\SpecialCharTok{{-}} \FloatTok{1.5} \SpecialCharTok{*}\NormalTok{ IQR\_value}
+\NormalTok{limite\_superior }\OtherTok{\textless{}{-}}\NormalTok{ Q3 }\SpecialCharTok{+} \FloatTok{1.5} \SpecialCharTok{*}\NormalTok{ IQR\_value}
+
+\CommentTok{\# Filtrar datos sin atípicos}
+\NormalTok{student\_por\_num\_filtrado }\OtherTok{\textless{}{-}}\NormalTok{ student\_por\_num }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(G3 }\SpecialCharTok{\textgreater{}=}\NormalTok{ limite\_inferior }\SpecialCharTok{\&}\NormalTok{ G3 }\SpecialCharTok{\textless{}=}\NormalTok{ limite\_superior)}
+\end{Highlighting}
+\end{Shaded}
+
+En los pasos anteriores se han seleccionado solo los valores
+cuantitativos, numéricos, y luego se filtraron en las calificaciones,
+que son las variables de interés, para suprimir los valores atípicos en
+este modelo. El siguiente paso es hacer una gráfica para entender el
+coheficiente correlación de Pearson, distribución y linealidad que
+tienen las variables entres sí. Con este paso, se puede observar si se
+cumplen algunos requisitos, como el R cuadrado.
+
+En síntesis, permite conocer si existe o no una relación entre las
+variables, positiva o negativa, que lleva a establecer si cuando se
+incrementa una variable se puede incrementar otra o disminuir; si el
+comportamiento de de las variables es el mismo, que se incrementan o
+disminuyen al mismo tiempo, o contrario, que una se incrementa y otra
+disminuye.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Correlaciones}
+
+\CommentTok{\# creación de conjuntos de cada set de datos con las calificaciones para ver correlaciones entre estas.}
+
+\NormalTok{grades\_mat }\OtherTok{\textless{}{-}}\NormalTok{ student\_mat[student\_mat}\SpecialCharTok{$}\NormalTok{G1 }\SpecialCharTok{\textgreater{}} \DecValTok{0} \SpecialCharTok{\&}\NormalTok{ student\_mat}\SpecialCharTok{$}\NormalTok{G2 }\SpecialCharTok{\textgreater{}} \DecValTok{0} \SpecialCharTok{\&}\NormalTok{ student\_mat}\SpecialCharTok{$}\NormalTok{G3 }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{, }\FunctionTok{c}\NormalTok{(}\StringTok{"G1"}\NormalTok{, }\StringTok{"G2"}\NormalTok{, }\StringTok{"G3"}\NormalTok{)]}
+
+
+\NormalTok{grades\_por }\OtherTok{\textless{}{-}}\NormalTok{ student\_por[student\_por}\SpecialCharTok{$}\NormalTok{G1 }\SpecialCharTok{\textgreater{}} \DecValTok{0} \SpecialCharTok{\&}\NormalTok{ student\_por}\SpecialCharTok{$}\NormalTok{G2 }\SpecialCharTok{\textgreater{}} \DecValTok{0} \SpecialCharTok{\&}\NormalTok{ student\_por}\SpecialCharTok{$}\NormalTok{G3 }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{, }\FunctionTok{c}\NormalTok{(}\StringTok{"G1"}\NormalTok{, }\StringTok{"G2"}\NormalTok{, }\StringTok{"G3"}\NormalTok{)]}
+
+
+\CommentTok{\# Correlaciones}
+\CommentTok{\# notas de matemáticas:}
+\NormalTok{GGally}\SpecialCharTok{::}\FunctionTok{ggpairs}\NormalTok{(grades\_mat,}
+                \AttributeTok{lower =} \FunctionTok{list}\NormalTok{(}\AttributeTok{continuous =} \StringTok{"smooth"}\NormalTok{),}
+                \AttributeTok{diag =} \FunctionTok{list}\NormalTok{(}\AttributeTok{continuous =} \StringTok{"barDiag"}\NormalTok{),}
+                \AttributeTok{upper =} \FunctionTok{list}\NormalTok{(}\AttributeTok{continuous =} \FunctionTok{wrap}\NormalTok{(}\StringTok{"cor"}\NormalTok{, }\AttributeTok{size =} \DecValTok{4}\NormalTok{)))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+\end{verbatim}
+
+\includegraphics{proyecto_unidad_3_files/figure-latex/unnamed-chunk-3-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{boxplot}\NormalTok{(grades\_mat)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{proyecto_unidad_3_files/figure-latex/unnamed-chunk-3-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# notas de portugués}
+\NormalTok{GGally}\SpecialCharTok{::}\FunctionTok{ggpairs}\NormalTok{(grades\_por,}
+                \AttributeTok{lower =} \FunctionTok{list}\NormalTok{(}\AttributeTok{continuous =} \StringTok{"smooth"}\NormalTok{),}
+                \AttributeTok{diag =} \FunctionTok{list}\NormalTok{(}\AttributeTok{continuous =} \StringTok{"barDiag"}\NormalTok{),}
+                \AttributeTok{upper =} \FunctionTok{list}\NormalTok{(}\AttributeTok{continuous =} \FunctionTok{wrap}\NormalTok{(}\StringTok{"cor"}\NormalTok{, }\AttributeTok{size =} \DecValTok{4}\NormalTok{)))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+\end{verbatim}
+
+\includegraphics{proyecto_unidad_3_files/figure-latex/unnamed-chunk-3-3.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{boxplot}\NormalTok{(grades\_por)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{proyecto_unidad_3_files/figure-latex/unnamed-chunk-3-4.pdf}
+
+Teniendo en cuenta lo anterior, se puede ver en que las variables G3 y
+G2 tienen una correlación de 0,966 en la asignatura de Matemáticas; para
+Portugués es de 0,934. En ambos conjuntos de datos hay una correlación
+muy fuerte, de casi 1, lo que quiere decir que es casi exacta la
+relación entre varibales (como lo exhiben los gráficos de puntos).
+
+Otro aspecto a destacar de estos datos es que los histogranmas muestran
+que hay una distribución que tiende a normal entre las variables,
+relacionadas entre ellas. En cada variable adicional se puede evidenciar
+un comportamiento similar (como se muestra en los anexos).
+
+\section{Modelo de regresión lineal
+simple}\label{modelo-de-regresiuxf3n-lineal-simple}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Modelo regresión lineal}
+\CommentTok{\# Correlación de Pearson Matemáticas}
+
+\FunctionTok{cor}\NormalTok{(student\_mat\_num\_filtrado}\SpecialCharTok{$}\NormalTok{G3, student\_mat\_num\_filtrado}\SpecialCharTok{$}\NormalTok{G1, }\AttributeTok{use =} \StringTok{"complete.obs"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.891805
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cor}\NormalTok{(student\_mat\_num\_filtrado}\SpecialCharTok{$}\NormalTok{G3, student\_mat\_num\_filtrado}\SpecialCharTok{$}\NormalTok{G2, }\AttributeTok{use =} \StringTok{"complete.obs"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.9655825
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cor}\NormalTok{(student\_mat\_num\_filtrado}\SpecialCharTok{$}\NormalTok{G3, student\_mat\_num\_filtrado}\SpecialCharTok{$}\NormalTok{studytime, }\AttributeTok{use =} \StringTok{"complete.obs"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.1267281
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Correlación de Pearson Portugués}
+\FunctionTok{cor}\NormalTok{(student\_por\_num\_filtrado}\SpecialCharTok{$}\NormalTok{G3, student\_por\_num\_filtrado}\SpecialCharTok{$}\NormalTok{G1, }\AttributeTok{use =} \StringTok{"complete.obs"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.874777
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cor}\NormalTok{(student\_por\_num\_filtrado}\SpecialCharTok{$}\NormalTok{G3, student\_por\_num\_filtrado}\SpecialCharTok{$}\NormalTok{G2, }\AttributeTok{use =} \StringTok{"complete.obs"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.9426912
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cor}\NormalTok{(student\_por\_num\_filtrado}\SpecialCharTok{$}\NormalTok{G3, student\_por\_num\_filtrado}\SpecialCharTok{$}\NormalTok{studytime, }\AttributeTok{use =} \StringTok{"complete.obs"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.2498546
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Regresión matemáticas}
+\NormalTok{modelo\_mat }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(G3 }\SpecialCharTok{\textasciitilde{}}\NormalTok{ G2, }\AttributeTok{data =}\NormalTok{ student\_mat\_num\_filtrado)}
+\FunctionTok{summary}\NormalTok{(modelo\_mat)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+Call:
+lm(formula = G3 ~ G2, data = student_mat_num_filtrado)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.2172 -0.1978 -0.1494  0.8119  2.8022 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  0.27529    0.16686    1.65   0.0999 .  
+G2           0.99031    0.01416   69.95   <2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.8407 on 355 degrees of freedom
+Multiple R-squared:  0.9323,    Adjusted R-squared:  0.9322 
+F-statistic:  4893 on 1 and 355 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#plot(modelo\_mat)}
+
+\NormalTok{modelo\_por }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(G3 }\SpecialCharTok{\textasciitilde{}}\NormalTok{ G2, }\AttributeTok{data =}\NormalTok{ student\_por\_num\_filtrado)}
+\FunctionTok{summary}\NormalTok{(modelo\_por)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+Call:
+lm(formula = G3 ~ G2, data = student_por_num_filtrado)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.6274 -0.4847 -0.2468  0.5629  5.4678 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  1.00793    0.16167   6.234  8.3e-10 ***
+G2           0.95243    0.01342  70.969  < 2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.8872 on 631 degrees of freedom
+Multiple R-squared:  0.8887,    Adjusted R-squared:  0.8885 
+F-statistic:  5037 on 1 and 631 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#plot(modelo\_mat)}
+\end{Highlighting}
+\end{Shaded}
+
+\section{Análisis de diagnóstico}\label{anuxe1lisis-de-diagnuxf3stico}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# diagnóstico del modelo}
+
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mfrow =} \FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{, }\DecValTok{2}\NormalTok{))}
+\FunctionTok{plot}\NormalTok{(modelo\_mat, }\AttributeTok{col =} \StringTok{"blue"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{proyecto_unidad_3_files/figure-latex/unnamed-chunk-5-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mfrow =} \FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{, }\DecValTok{2}\NormalTok{))}
+\FunctionTok{plot}\NormalTok{(modelo\_por, }\AttributeTok{col =} \StringTok{"red"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{proyecto_unidad_3_files/figure-latex/unnamed-chunk-5-2.pdf}
+
+\section{Análisis de datos
+atípicos}\label{anuxe1lisis-de-datos-atuxedpicos}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Valores ajustados}
+\NormalTok{ajuste\_mat }\OtherTok{\textless{}{-}}\NormalTok{ modelo\_mat}\SpecialCharTok{$}\NormalTok{fitted.values}
+
+\NormalTok{ajuste\_por }\OtherTok{\textless{}{-}}\NormalTok{ modelo\_por}\SpecialCharTok{$}\NormalTok{fitted.values}
+
+\CommentTok{\# Extracción de residuales}
+
+\NormalTok{resid\_mat }\OtherTok{\textless{}{-}}\NormalTok{ modelo\_mat}\SpecialCharTok{$}\NormalTok{residuals}
+
+\NormalTok{resid\_por }\OtherTok{\textless{}{-}}\NormalTok{ modelo\_por}\SpecialCharTok{$}\NormalTok{residuals}
+
+\CommentTok{\# Predicciones}
+
+\NormalTok{student\_mat\_num\_filtrado}\SpecialCharTok{$}\NormalTok{predicciones }\OtherTok{\textless{}{-}} \FunctionTok{predict}\NormalTok{(modelo\_mat)}
+
+\NormalTok{student\_por\_num\_filtrado}\SpecialCharTok{$}\NormalTok{predicciones }\OtherTok{\textless{}{-}} \FunctionTok{predict}\NormalTok{(modelo\_por)}
+
+\CommentTok{\# dataframe con los datos de cada modelo}
+  \CommentTok{\#Matemáticas}
+\NormalTok{resultados\_mat }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}
+  \AttributeTok{G2 =}\NormalTok{ student\_mat\_num\_filtrado}\SpecialCharTok{$}\NormalTok{G2,}
+  \AttributeTok{G3 =}\NormalTok{ student\_mat\_num\_filtrado}\SpecialCharTok{$}\NormalTok{G3,}
+  \AttributeTok{predicciones =}\NormalTok{ ajuste\_mat,}
+  \AttributeTok{residual =}\NormalTok{ resid\_mat}
+\NormalTok{)}
+
+\FunctionTok{print}\NormalTok{(}\FunctionTok{head}\NormalTok{(resultados\_mat))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+  G2 G3 predicciones   residual
+1  6  6     6.217169 -0.2171693
+2  5  6     5.226855  0.7731447
+3  8 10     8.197797  1.8022029
+4 14 15    14.139681  0.8603192
+5 10 10    10.178425 -0.1784250
+6 15 15    15.129995 -0.1299948
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+  \CommentTok{\#Portugués}
+\NormalTok{resultados\_por }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}
+  \AttributeTok{G2 =}\NormalTok{ student\_por\_num\_filtrado}\SpecialCharTok{$}\NormalTok{G2,}
+  \AttributeTok{G3 =}\NormalTok{ student\_por\_num\_filtrado}\SpecialCharTok{$}\NormalTok{G3,}
+  \AttributeTok{predicciones =}\NormalTok{ ajuste\_por,}
+  \AttributeTok{residual =}\NormalTok{ resid\_por}
+\NormalTok{)}
+\FunctionTok{print}\NormalTok{(}\FunctionTok{head}\NormalTok{(resultados\_por))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+  G2 G3 predicciones   residual
+1 11 11     11.48465 -0.4846542
+2 11 11     11.48465 -0.4846542
+3 13 12     13.38951 -1.3895139
+4 14 14     14.34194 -0.3419438
+5 13 13     13.38951 -0.3895139
+6 12 13     12.43708  0.5629160
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# recta de regresión}
+
+  \CommentTok{\# Matemáticas}
+\FunctionTok{ggplot}\NormalTok{(student\_mat\_num\_filtrado, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ G2, }\AttributeTok{y =}\NormalTok{ G3)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_smooth}\NormalTok{(}\AttributeTok{method =} \StringTok{"lm"}\NormalTok{, }\AttributeTok{se =} \ConstantTok{FALSE}\NormalTok{, }\AttributeTok{color =} \StringTok{"lightgreen"}\NormalTok{) }\SpecialCharTok{+} \CommentTok{\#color de la regresión}
+  \FunctionTok{geom\_segment}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{xend =}\NormalTok{ G1, }\AttributeTok{yend =}\NormalTok{ predicciones), }\AttributeTok{col =} \StringTok{"red"}\NormalTok{, }\AttributeTok{lty =} \StringTok{"dashed"}\NormalTok{) }\SpecialCharTok{+} \CommentTok{\# residuales línea roja}
+  \FunctionTok{geom\_point}\NormalTok{() }\SpecialCharTok{+} \CommentTok{\#Puntos de datos observados}
+  \FunctionTok{geom\_point}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =}\NormalTok{ predicciones), }\AttributeTok{col =} \StringTok{"red"}\NormalTok{) }\SpecialCharTok{+} \CommentTok{\#puntos de predicción en rojo}
+  \FunctionTok{theme\_light}\NormalTok{() }\CommentTok{\#mejora la visualización}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+`geom_smooth()` using formula = 'y ~ x'
+\end{verbatim}
+
+\includegraphics{proyecto_unidad_3_files/figure-latex/unnamed-chunk-6-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+  \CommentTok{\# Portugués}
+\FunctionTok{ggplot}\NormalTok{(student\_por\_num\_filtrado, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ G2, }\AttributeTok{y =}\NormalTok{ G3)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_smooth}\NormalTok{(}\AttributeTok{method =} \StringTok{"lm"}\NormalTok{, }\AttributeTok{se =} \ConstantTok{FALSE}\NormalTok{, }\AttributeTok{color =} \StringTok{"lightblue"}\NormalTok{) }\SpecialCharTok{+} \CommentTok{\#color de la regresión}
+  \FunctionTok{geom\_segment}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{xend =}\NormalTok{ G1, }\AttributeTok{yend =}\NormalTok{ predicciones), }\AttributeTok{col =} \StringTok{"red"}\NormalTok{, }\AttributeTok{lty =} \StringTok{"dashed"}\NormalTok{) }\SpecialCharTok{+} \CommentTok{\# residuales línea roja}
+  \FunctionTok{geom\_point}\NormalTok{() }\SpecialCharTok{+} \CommentTok{\#Puntos de datos observados}
+  \FunctionTok{geom\_point}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =}\NormalTok{ predicciones), }\AttributeTok{col =} \StringTok{"red"}\NormalTok{) }\SpecialCharTok{+} \CommentTok{\#puntos de predicción en rojo}
+  \FunctionTok{theme\_light}\NormalTok{() }\CommentTok{\#mejora la visualización}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+`geom_smooth()` using formula = 'y ~ x'
+\end{verbatim}
+
+\includegraphics{proyecto_unidad_3_files/figure-latex/unnamed-chunk-6-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# gráfico de residuos y valors ajustados}
+  \CommentTok{\# Matemáticas}
+\FunctionTok{ggplot}\NormalTok{(resultados\_mat, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ predicciones, }\AttributeTok{y =}\NormalTok{ residual)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{geom\_hline}\NormalTok{(}\AttributeTok{yintercept =} \DecValTok{0}\NormalTok{, }\AttributeTok{linetype =} \StringTok{"dashed"}\NormalTok{, }\AttributeTok{color =} \StringTok{"red"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{"Residuos vs. valores ajustados"}\NormalTok{, }\AttributeTok{x =} \StringTok{"Valores ajustados"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Residuos"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{proyecto_unidad_3_files/figure-latex/unnamed-chunk-6-3.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+  \CommentTok{\# Portugués}
+\FunctionTok{ggplot}\NormalTok{(resultados\_por, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ predicciones, }\AttributeTok{y =}\NormalTok{ residual)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{geom\_hline}\NormalTok{(}\AttributeTok{yintercept =} \DecValTok{0}\NormalTok{, }\AttributeTok{linetype =} \StringTok{"dashed"}\NormalTok{, }\AttributeTok{color =} \StringTok{"red"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{"Residuos vs. valores ajustados"}\NormalTok{, }\AttributeTok{x =} \StringTok{"Valores ajustados"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Residuos"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{proyecto_unidad_3_files/figure-latex/unnamed-chunk-6-4.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Histograma de residuos}
+  \CommentTok{\#Matemáticas}
+\FunctionTok{qqnorm}\NormalTok{(resid\_mat)}
+\FunctionTok{qqline}\NormalTok{(resid\_mat, }\AttributeTok{col =} \StringTok{"red"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{proyecto_unidad_3_files/figure-latex/unnamed-chunk-6-5.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+  \CommentTok{\# Portugués}
+\FunctionTok{qqnorm}\NormalTok{(resid\_por)}
+\FunctionTok{qqline}\NormalTok{(resid\_por, }\AttributeTok{col =} \StringTok{"blue"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{proyecto_unidad_3_files/figure-latex/unnamed-chunk-6-6.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#test de normalidad}
+  \CommentTok{\# Matemáticas}
+\FunctionTok{shapiro.test}\NormalTok{(resid\_mat)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+    Shapiro-Wilk normality test
+
+data:  resid_mat
+W = 0.89793, p-value = 9.682e-15
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+  \CommentTok{\# Portugués}
+\FunctionTok{shapiro.test}\NormalTok{(resid\_por)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+    Shapiro-Wilk normality test
+
+data:  resid_por
+W = 0.92957, p-value < 2.2e-16
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#test de homocedasticidad}
+
+\CommentTok{\# Matemáticas}
+\FunctionTok{bptest}\NormalTok{(modelo\_mat)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+    studentized Breusch-Pagan test
+
+data:  modelo_mat
+BP = 12.297, df = 1, p-value = 0.0004536
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+  \CommentTok{\# Portugués}
+\FunctionTok{bptest}\NormalTok{(modelo\_por)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+    studentized Breusch-Pagan test
+
+data:  modelo_por
+BP = 4.6101, df = 1, p-value = 0.03178
+\end{verbatim}
+
+\section{Intervalos de confianza}\label{intervalos-de-confianza}
+
+\section{Discusión y conclusiones}\label{discusiuxf3n-y-conclusiones}
+
+Aunque existe una correlación fuerte entre la variable G3 y las
+variables G2 y G1, no se puede establecer el principio de normalidad de
+Shapiro ni bptest, puesto que el número de variables que se han
+utilizado en el ejemplo no permiten que se puedan presentar. Aunque en
+el código que se usó previo a este documento se intentó hacer con
+logaritmo y otros métodos, no se pudo cumplir este principio.
+
+Ahora bien, por tratarse de un ejemplo académico y práctico, se deja tal
+como está.
+
+La correlación vista entre las notas se presenta porque corresponden a
+las calificaciones de las asignaturas de cada periodo académico en las
+escuelas analizadas (G1 es del primero, G2, del segundo, y G3, del
+tercero). Esto ocurre, ya que no se podrían tener las notas del tercer
+periodo si no se tienen las del primero ni las del segundo (Cortes y
+Silva, 2008).
+
+\section{Referencias
+bibliográficas}\label{referencias-bibliogruxe1ficas}
+
+Cortez, P. y Silva, A. (2008). Student Performance {[}Dataset{]}. UCI
+Machine Learning Repository. \url{doi://doi.org/10.24432/C5TG7T}.
+
+\section{Anexos}\label{anexos}
+
+En este apartado se escribe todo el código que no se usó en el cuerpo
+del informe por dos razones: la primera, los requisitos de extensión
+para esta actividad no permiten que estén ahí; la segunda, no son tan
+relevantes para el informe, aunque dan cuenta de algunas características
+del conjunto de datos escogido para esta actividad.
+
+El primer código que se escribe es aquel que permite observar las
+variables cuantitativas escogidas del conjunto de datos que corresponde
+a la asignatura de Portugués. Para esta variable se ha escogido usar el
+color ``lightgreen'' para diferenciarla de Matemáticas. Las variables
+escogidas son edad (age), tiempo dedicado a estudiar (studytime), el
+corte 1 (G1), el corte 2 (G2) y le corte 3 (G3)
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Portugués}
+\NormalTok{por1 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(student\_por\_num\_filtrado, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ age)) }\SpecialCharTok{+} \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{fill =} \StringTok{"lightgreen"}\NormalTok{, }\AttributeTok{color =} \StringTok{"black"}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{theme\_minimal}\NormalTok{()}
+\NormalTok{por2 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(student\_por\_num\_filtrado, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ studytime)) }\SpecialCharTok{+} \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{fill =} \StringTok{"lightgreen"}\NormalTok{, }\AttributeTok{color =} \StringTok{"black"}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{theme\_minimal}\NormalTok{()}
+\NormalTok{por3 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(student\_por\_num\_filtrado, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ G1)) }\SpecialCharTok{+} \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{fill =} \StringTok{"lightgreen"}\NormalTok{, }\AttributeTok{color =} \StringTok{"black"}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{theme\_minimal}\NormalTok{()}
+\NormalTok{por4 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(student\_por\_num\_filtrado, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ G2)) }\SpecialCharTok{+} \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{fill =} \StringTok{"lightgreen"}\NormalTok{, }\AttributeTok{color =} \StringTok{"black"}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{theme\_minimal}\NormalTok{()}
+\NormalTok{por5 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(student\_por\_num\_filtrado, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ G3)) }\SpecialCharTok{+} \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{fill =} \StringTok{"lightgreen"}\NormalTok{, }\AttributeTok{color =} \StringTok{"black"}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{theme\_minimal}\NormalTok{()}
+
+\NormalTok{(por1 }\SpecialCharTok{|}\NormalTok{ por2 }\SpecialCharTok{|}\NormalTok{ por3)}\SpecialCharTok{/}\NormalTok{(por4 }\SpecialCharTok{|}\NormalTok{ por5)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{proyecto_unidad_3_files/figure-latex/unnamed-chunk-8-1.pdf}
+
+El siguiente código es el que permite, al igual que el anterior, conocer
+las variables cuantitativas escogidas del conjunto de datos utilizado en
+el presente ejercicio. Para este caso, ha sido de la asignatura de
+Matemáticas, para la cual se usa el color ``lightblue''. Las variables
+escogidas son edad (age), tiempo dedicado a estudiar (studytime), el
+corte 1 (G1), el corte 2 (G2) y le corte 3 (G3)
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Matemáticas}
+\NormalTok{mat1 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(student\_mat\_num\_filtrado, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ age)) }\SpecialCharTok{+} \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{fill =} \StringTok{"lightblue"}\NormalTok{, }\AttributeTok{color =} \StringTok{"black"}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{theme\_minimal}\NormalTok{()}
+\NormalTok{mat2 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(student\_mat\_num\_filtrado, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ studytime)) }\SpecialCharTok{+} \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{fill =} \StringTok{"lightblue"}\NormalTok{, }\AttributeTok{color =} \StringTok{"black"}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{theme\_minimal}\NormalTok{()}
+\NormalTok{mat3 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(student\_mat\_num\_filtrado, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ G1)) }\SpecialCharTok{+} \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{fill =} \StringTok{"lightblue"}\NormalTok{, }\AttributeTok{color =} \StringTok{"black"}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{theme\_minimal}\NormalTok{()}
+\NormalTok{mat4 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(student\_mat\_num\_filtrado, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ G2)) }\SpecialCharTok{+} \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{fill =} \StringTok{"lightblue"}\NormalTok{, }\AttributeTok{color =} \StringTok{"black"}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{theme\_minimal}\NormalTok{()}
+\NormalTok{mat5 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(student\_mat\_num\_filtrado, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ G3)) }\SpecialCharTok{+} \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{fill =} \StringTok{"lightblue"}\NormalTok{, }\AttributeTok{color =} \StringTok{"black"}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{theme\_minimal}\NormalTok{()}
+
+\NormalTok{(mat1 }\SpecialCharTok{|}\NormalTok{ mat2 }\SpecialCharTok{|}\NormalTok{ mat3)}\SpecialCharTok{/}\NormalTok{(mat4 }\SpecialCharTok{|}\NormalTok{ mat5)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{proyecto_unidad_3_files/figure-latex/unnamed-chunk-9-1.pdf}
+
+Actividad:
+
+Caso de estudio y creación de herramienta interactiva A pesar de los
+avances en el nivel educativo de la población portuguesa en las últimas
+décadas, las estadísticas continúan ubicando a Portugal entre los países
+con peores indicadores en Europa, principalmente debido a sus elevadas
+tasas de fracaso escolar. En particular, el bajo desempeño en
+asignaturas fundamentales como Matemáticas y Lengua Portuguesa
+representa un desafío crítico.
+
+Este estudio analiza el rendimiento académico en la educación secundaria
+mediante un modelo de regresión lineal simple. Para ello, secuenta con
+datos de estudiantes, incluyendo calificaciones, características
+demográficas, factores sociales y aspectos relacionados con el entorno
+escolar, a partir de informes escolares y cuestionarios.
+
+Como aplicación directa de este trabajo, se busca desarrollar una
+herramienta interactiva utilizando Shiny y R, que permita modelar y
+predecir la calificación final de los estudiantes.
+
+Objetivos:
+
+Ajustar un modelo de regresión lineal simple para predecir la nota final
+del estudiante (G3). Este proceso incluirá la exploración de datos
+mediante gráficos, la evaluación estadística mediante pruebas t y F,
+coeficiente de determinación, el análisis de diagnóstico del modelo, así
+como la construcción de intervalos de confianza para los parámetros y
+para la estimación de la nota final condicionada a valores de la
+variable predictora, además de la generación de predicciones.
+
+Desarrollar una interfaz de usuario con múltiples pestañas que permita
+ajustar el modelo, visualizar gráficos y realizar predicciones. Se
+implementarán elementos dinámicos, como la selección de variables y la
+exclusión de observaciones, para modificar el modelo en tiempo real.
+Además, se generarán gráficos interactivos para representar
+correlaciones, evaluar el diagnóstico del modelo y visualizar
+predicciones con intervalos de confianza.
+
+Elaborar un informe de máximo cuatro páginas que resuma los aspectos más
+relevantes del análisis, incluyendo la exploración de datos, el ajuste
+del modelo, la inferencia estadística, la evaluación de los supuestos,
+la identificación de datos influyentes o atípicos, y la construcción de
+intervalos de confianza y predicciones.
+
+Intrucciones:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Descargar datos
+\item
+  Ajustar una regresión lineal simple (RLS) para predecir G3 con la
+  variable que mejor la modele. Aplicar estadística descriptivas,
+  pruebas de hipótesis, intervalos y todo lo requerido para validar el
+  modelo.
+\item
+  Definir interfaz de usuario (UI): 3.1. Implementar un diseño con
+  pestañas: una para la exploración de datos, otra para el resumen del
+  modelo, una para diagnóstico y otra para predicción. 3.2. Incluir
+  controles dinámicos como para seleccionar la variable predictora y
+  para excluir observaciones.
+\item
+  Definir la lógica del servidor
+\end{enumerate}
+
+4.1. Ajustar un modelo de regresión lineal en función de las opciones
+seleccionadas en la interfaz.
+
+4.2.Implementar pruebas de supuestos del modelo y presentar los
+resultados en tablas interactivas.
+
+4.3. Generar gráficos con para visualizar correlaciones, residuos y
+predicciones.
+
+Entregable
+
+Un archivo (.zip) que contenga los datos y un archivo en formato R o
+RMarkdown (.Rmd) con el código de la aplicación desarrollada en Shiny y
+R.
+
+Un archivo (.zip) que incluya datos, un archivo en formato RMarkdown
+(.Rmd) que tenga el informe en HTML creado con RMarkdown de máximo
+cuatro páginas (no incluye ni referencias ni anexos) que incluya las
+siguientes secciones:
+
+Exploración de datos: Análisis descriptivo mediante gráficos y tablas.
+
+Modelo de regresión lineal: Presentación del modelo y evaluación
+estadística a través de pruebas t y F, así como el coeficiente de
+determinación.
+
+Análisis de diagnóstico: Evaluación de los supuestos del modelo.
+
+Intervalos de confianza y predicciones: Construcción de intervalos de
+confianza para los parámetros del modelo y para la esperanza de la nota
+final condicionada a valores de la variable predictora, además de la
+generación de predicciones de las notas.
+
+Discusión y conclusiones: Interpretación de los resultados y principales
+hallazgos.
+
+Referencias bibliográficas: Fuentes consultadas para el desarrollo del
+trabajo.
+
+Anexos: Códigos, gráficos y tablas que respalden el informe.
+
+\end{document}
