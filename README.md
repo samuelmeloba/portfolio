@@ -67,6 +67,6 @@ Summary:
 ## 📫 Contact
 
 Feel free to connect with me:  
-LinkedIn: (https://www.linkedin.com/in/samuelmeloba) • Email: melosamuel1999@gmail.com
+LinkedIn: (https://www.linkedin.com/in/samuelmeloba-data/) • Email: melosamuel1999@gmail.com
 
 </footer>
