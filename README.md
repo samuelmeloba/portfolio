@@ -2,11 +2,20 @@
 
 # 👋 Hi, I'm Samuel Melo
 
-I'm a data professional working at the intersection of analysis and data science.
+I'm a Master's graduate in Data Science from Pontificia Universidad Javeriana with background in Political Science from Universidad del Cauca.
 
-Welcome to my data portfolio! This repository showcases my work and projects related to data analysis, data science, and machine learning.
+Welcome to my data portfolio! This repository showcases my work and projects in data analysis, data science, and machine learning.
 
-I've included some data projects here on different topics — a mix of personal and academic work.
+Here you'll find a collection of personal and academic projects covering different topics and datasets.
+
+Currently, I'm working on several projects using open data from the Colombian government, including:
+
+* Public contract award prediction
+* Air quality forecasting
+* Precipitation prediction
+* Traffic accident forecasting
+* Customer churn prediction
+
 
 ## 📌 Projects
 ### Sexual Harassment in New Zealand
